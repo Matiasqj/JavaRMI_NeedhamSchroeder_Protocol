@@ -1,6 +1,7 @@
 package servidorRMI;
 
 import swing.User;
+import swing.VentanaPrincipal;
 
 
 
