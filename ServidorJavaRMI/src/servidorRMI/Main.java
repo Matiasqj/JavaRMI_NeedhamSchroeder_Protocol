@@ -1,7 +1,7 @@
 package servidorRMI;
 
-import swing.User;
-import swing.VentanaPrincipal;
+import swing.Server_Ventana;
+
 
 
 
@@ -17,6 +17,6 @@ import swing.VentanaPrincipal;
  */
 public class Main {
      public static void main(String[] args) {
-         new User().setVisible(true);
+         new Server_Ventana().setVisible(true);
      }
 }
