@@ -5,15 +5,21 @@
  */
 package swing;
 
+import interfaz_implementaciones.ImplementacionServidor;
+import java.rmi.RemoteException;
+import java.rmi.registry.Registry;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.text.SimpleDateFormat;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 import mysql.ConexionMySQL;
+import servidorRMI.ConexionRmi;
 
 /**
  *
@@ -24,7 +30,7 @@ public class Server_Ventana extends javax.swing.JFrame {
     /**
      * Creates new form User
      */
-  
+    ConexionRmi conexion = new ConexionRmi();
     public Server_Ventana() {
         initComponents();
         
@@ -433,13 +439,31 @@ public class Server_Ventana extends javax.swing.JFrame {
     }//GEN-LAST:event_jTextField1MouseClicked
 
     private void buttondetenerActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttondetenerActionPerformed
-        buttondetener.setEnabled(false);
-        buttoniniciar.setEnabled(true);
+        
         LogServer.append(""+getTimestamp()+" "+"Se detuvo el servidor"+"\n");
+        try {
+            conexion.detener();
+            buttondetener.setEnabled(false);
+            buttoniniciar.setEnabled(true);
+        } catch (RemoteException ex) {
+            Logger.getLogger(Server_Ventana.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }//GEN-LAST:event_buttondetenerActionPerformed
 
     private void buttoniniciarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttoniniciarActionPerformed
-        
+         Registry registro;
+        try {
+            registro = conexion.getRegistry();
+            //Se instancia el objeto que implementa la interfaz del Servidor
+            //Ahora hay que hacerlo remoto, para ello se registra en el Registry
+            //con el método "rebind" que lo registra con un nombre para poder ser visto en ese espacio
+            //en este caso se le dio el nombre "Implementacion".
+            ImplementacionServidor objeto = new ImplementacionServidor();
+            registro.rebind("Lab", objeto);
+            
+        } catch (RemoteException ex) {
+            Logger.getLogger(Server_Ventana.class.getName()).log(Level.SEVERE, null, ex);
+        }
         buttoniniciar.setEnabled(false);
         buttondetener.setEnabled(true);
         LogServer.append(""+getTimestamp()+" "+"Se inició el servidor"+"\n");
