@@ -17,6 +17,7 @@ import java.text.SimpleDateFormat;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JOptionPane;
+import javax.swing.JTextArea;
 import javax.swing.table.DefaultTableModel;
 import mysql.ConexionMySQL;
 import servidorRMI.ConexionRmi;
@@ -31,33 +32,48 @@ public class Server_Ventana extends javax.swing.JFrame {
      * Creates new form User
      */
     ConexionRmi conexion = new ConexionRmi();
+    private static Server_Ventana vistaserver;
+
     public Server_Ventana() {
         initComponents();
-        
+        vistaserver = this;
         buttondetener.setEnabled(false);
         this.setVisible(true);
         this.setLocationRelativeTo(null);
         CargarUsuarios();
-        
+
     }
-    
-    
+
+    public static Server_Ventana getServer_Ventana() {
+
+        return vistaserver;
+    }
+  public void Actualizar_Log_Usuario_ErrorSQL(String ex) {
+        LogServer.append("" + getTimestamp() + " " + ex + "\n");
+    }
+     
+    public void Actualizar_Log_Usuario_Conexion(String nombre) {
+        LogServer.append("" + getTimestamp() + " Se conectó el usuario: " + nombre+" \n");
+    }
+
     DefaultTableModel tabla;
-    
-    public boolean server_mysql_online(){
+
+    public boolean server_mysql_online() {
         ConexionMySQL mysql = new ConexionMySQL();
         Connection on = mysql.Conectar();
-         if(on==null)
-            LogServer.append(""+getTimestamp()+" "+"ERROR: "+"No se pudo conectar con Mysql"+"\n");
+        if (on == null) {
+            LogServer.append("" + getTimestamp() + " " + "ERROR: " + "No se pudo conectar con Mysql" + "\n");
+        }
         return on != null;
 
     }
-    public String  getTimestamp(){
-      String timeStamp = new SimpleDateFormat("yyyy-MM-dd : HH:mm:ss").format(new java.util.Date());
-      
-      return timeStamp;
+
+    public String getTimestamp() {
+        String timeStamp = new SimpleDateFormat("yyyy-MM-dd : HH:mm:ss").format(new java.util.Date());
+
+        return timeStamp;
     }
-    
+
     public void CargarUsuarios() {
         String[] titulo = {"Id", "Nombre Usuario", "Contraseña"};
         tabla = new DefaultTableModel(null, titulo);
@@ -65,8 +81,10 @@ public class Server_Ventana extends javax.swing.JFrame {
         try {
             ConexionMySQL mysql = new ConexionMySQL();
             Connection on = mysql.Conectar();
-             if(on==null)
-            LogServer.append(""+getTimestamp()+" "+"ERROR: "+"No se pudo conectar con Mysql"+"\n");
+            if (on == null) {
+                LogServer.append("" + getTimestamp() + " " + "ERROR: " + "No se pudo conectar con Mysql" + "\n");
+            }
+            
             Statement st = on.createStatement();
             ResultSet rs = st.executeQuery(query);
             while (rs.next()) {
@@ -77,18 +95,17 @@ public class Server_Ventana extends javax.swing.JFrame {
                 fila[1] = rs.getString("nombre_usuario");
                 fila[2] = rs.getString("password");
                 tabla.addRow(fila);
-                
+
             }
             jTable1.setModel(tabla);
             if (tabla.getRowCount() == 0) {
-                
+
                 registros.setText("No hay registros");
-            }
-            else{
+            } else {
                 registros.setText("");
             }
         } catch (SQLException ex) {
-            LogServer.append(""+getTimestamp()+" "+"ERROR: "+ex+"\n");
+            LogServer.append("" + getTimestamp() + " " + "ERROR: " + ex + "\n");
             JOptionPane.showMessageDialog(null, ex);
         }
 
@@ -363,41 +380,41 @@ public class Server_Ventana extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void eliminarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_eliminarActionPerformed
-        int id =0;
+        int id = 0;
         ConexionMySQL mysql = new ConexionMySQL();
         Connection on = mysql.Conectar();
-         if(on==null)
-            LogServer.append(""+getTimestamp()+" "+"ERROR: "+"No se pudo conectar con Mysql"+"\n");
-        // "Barney Rubble" record.
+        if (on == null) {
+            LogServer.append("" + getTimestamp() + " " + "ERROR: " + "No se pudo conectar con Mysql" + "\n");
+        }
+
         String query = "delete from usuario where id = ?";
         int fila_seleccionada;
         try {
             fila_seleccionada = jTable1.getSelectedRow();
-            if(fila_seleccionada==-1){
-                 JOptionPane.showMessageDialog(null, "No se selecciono una fila");
-            }
-            else{
-            DefaultTableModel tabla;
-            tabla = (DefaultTableModel) jTable1.getModel();
-            id = Integer.valueOf((String) tabla.getValueAt(fila_seleccionada, 0));
-            String usuario  = String.valueOf((String) tabla.getValueAt(fila_seleccionada, 1));
-            PreparedStatement preparedStmt = on.prepareStatement(query);
-            preparedStmt.setInt(1, id);
-            int valor=preparedStmt.executeUpdate();
-            if(valor>0){
-            jTable1.removeAll();
-            CargarUsuarios();
-            JOptionPane.showMessageDialog(null, "Se eliminó con éxito el usuario");
-            LogServer.append(""+getTimestamp()+" "+"Se eliminó el usuario: "+usuario+"\n");
-            jTextField1.setText("");
-            jTextField2.setText("");
-            }
-           
+            if (fila_seleccionada == -1) {
+                JOptionPane.showMessageDialog(null, "No se selecciono una fila");
+            } else {
+                DefaultTableModel tabla;
+                tabla = (DefaultTableModel) jTable1.getModel();
+                id = Integer.valueOf((String) tabla.getValueAt(fila_seleccionada, 0));
+                String usuario = String.valueOf((String) tabla.getValueAt(fila_seleccionada, 1));
+                PreparedStatement preparedStmt = on.prepareStatement(query);
+                preparedStmt.setInt(1, id);
+                int valor = preparedStmt.executeUpdate();
+                if (valor > 0) {
+                    jTable1.removeAll();
+                    CargarUsuarios();
+                    JOptionPane.showMessageDialog(null, "Se eliminó con éxito el usuario");
+                    LogServer.append("" + getTimestamp() + " " + "Se eliminó el usuario: " + usuario + "\n");
+                    jTextField1.setText("");
+                    jTextField2.setText("");
+                }
+
             }
             on.close();
         } catch (SQLException ex) {
             JOptionPane.showMessageDialog(null, ex);
-            LogServer.append(""+getTimestamp()+" "+"ERROR: "+ex+"\n");
+            LogServer.append("" + getTimestamp() + " " + "ERROR: " + ex + "\n");
         }
 
     }//GEN-LAST:event_eliminarActionPerformed
@@ -412,8 +429,9 @@ public class Server_Ventana extends javax.swing.JFrame {
 
         ConexionMySQL mysql = new ConexionMySQL();
         Connection on = mysql.Conectar();
-        if(on==null)
-            LogServer.append(""+getTimestamp()+" "+"ERROR: "+"No se pudo conectar con Mysql");
+        if (on == null) {
+            LogServer.append("" + getTimestamp() + " " + "ERROR: " + "No se pudo conectar con Mysql");
+        }
         String query = "INSERT INTO usuario(nombre_usuario,password)" + "VALUES(?,?)";
         try {
             PreparedStatement pst = on.prepareStatement(query);
@@ -423,13 +441,13 @@ public class Server_Ventana extends javax.swing.JFrame {
             if (valor > 0) {
                 jTable1.removeAll();
                 infoguardar.setText("Se ha guardado con éxito");
-                LogServer.append(""+getTimestamp()+" "+"Nuevo usuario creado : "+usuario+"\n");
+                LogServer.append("" + getTimestamp() + " " + "Nuevo usuario creado : " + usuario + "\n");
                 CargarUsuarios();
             }
 
         } catch (SQLException ex) {
             JOptionPane.showMessageDialog(null, ex);
-            LogServer.append(""+getTimestamp()+" "+"ERROR: "+ex+"\n");
+            LogServer.append("" + getTimestamp() + " " + "ERROR: " + ex + "\n");
         }
 
     }//GEN-LAST:event_buttonguardarActionPerformed
@@ -439,8 +457,8 @@ public class Server_Ventana extends javax.swing.JFrame {
     }//GEN-LAST:event_jTextField1MouseClicked
 
     private void buttondetenerActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttondetenerActionPerformed
-        
-        LogServer.append(""+getTimestamp()+" "+"Se detuvo el servidor"+"\n");
+
+        LogServer.append("" + getTimestamp() + " " + "Se detuvo el servidor" + "\n");
         try {
             conexion.detener();
             buttondetener.setEnabled(false);
@@ -451,7 +469,7 @@ public class Server_Ventana extends javax.swing.JFrame {
     }//GEN-LAST:event_buttondetenerActionPerformed
 
     private void buttoniniciarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttoniniciarActionPerformed
-         Registry registro;
+        Registry registro;
         try {
             registro = conexion.getRegistry();
             //Se instancia el objeto que implementa la interfaz del Servidor
@@ -460,24 +478,24 @@ public class Server_Ventana extends javax.swing.JFrame {
             //en este caso se le dio el nombre "Implementacion".
             ImplementacionServidor objeto = new ImplementacionServidor();
             registro.rebind("Lab", objeto);
-            
+
         } catch (RemoteException ex) {
             Logger.getLogger(Server_Ventana.class.getName()).log(Level.SEVERE, null, ex);
         }
         buttoniniciar.setEnabled(false);
         buttondetener.setEnabled(true);
-        LogServer.append(""+getTimestamp()+" "+"Se inició el servidor"+"\n");
+        LogServer.append("" + getTimestamp() + " " + "Se inició el servidor" + "\n");
     }//GEN-LAST:event_buttoniniciarActionPerformed
 
     private void SalirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_SalirActionPerformed
-       System.exit(0);
+        System.exit(0);
     }//GEN-LAST:event_SalirActionPerformed
 
     private void PanelTabMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_PanelTabMouseClicked
         // TODO add your handling code here:
     }//GEN-LAST:event_PanelTabMouseClicked
-
-    /**
+    
+   /**
      * @param args the command line arguments
      */
 

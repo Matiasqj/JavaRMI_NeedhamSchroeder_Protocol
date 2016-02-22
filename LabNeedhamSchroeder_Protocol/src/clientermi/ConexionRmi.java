@@ -29,7 +29,7 @@ public class ConexionRmi {
 
     public boolean iniciarRegistry() throws RemoteException{
         try{
-            System.out.println("llegue aca en iniciar");
+            
             //Se inicia RMIREGISTRY para el registro de objetos
             java.security.AllPermission a = new java.security.AllPermission();
             System.setProperty("java.security.policy", "rmi.policy");
@@ -37,7 +37,7 @@ public class ConexionRmi {
             startRegistry("127.0.1.1",1099);
             //Vamos al Registry y miramos el Objeto "Implementacion" para poder usarlo.
             servidor = (InterfazServidor)registry.lookup("Lab");
-            System.out.println("paso");
+            
             return true;
         }
         catch(Exception e){
@@ -89,13 +89,10 @@ public class ConexionRmi {
  *Parámetros: no tiene                                      *
  ************************************************************/
     
-    public void registrarCliente(String Nombre) throws RemoteException{
+    public int registrarCliente(String Nombre, String password) throws RemoteException{
         
-        cliente = new ImplementacionCliente();
-        System.out.println("asasas");
-        
-        servidor.registrarCliente(cliente, "soyuno");
-        
-        System.out.println("nooo");
+        cliente = new ImplementacionCliente();        
+        int valor = servidor.registrarCliente(cliente, Nombre,password);
+        return valor;
     }
 }

@@ -17,6 +17,8 @@ import swing.Server_Ventana;
  */
 public class Main {
      public static void main(String[] args) {
-         new Server_Ventana().setVisible(true);
+         Server_Ventana ventana;
+         ventana= new Server_Ventana();
+         ventana.setVisible(true);
      }
 }

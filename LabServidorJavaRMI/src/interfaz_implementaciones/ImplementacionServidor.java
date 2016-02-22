@@ -13,6 +13,8 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.Statement;
 import java.util.ArrayList;
+import mysql.ConsultasSQL;
+import swing.Server_Ventana;
 
 /**
  *
@@ -29,23 +31,35 @@ public class ImplementacionServidor extends UnicastRemoteObject implements Inter
         super();
     }
       
-    public synchronized void registrarCliente(InterfazCliente cliente, String Nombre) throws RemoteException{
-        System.out.println("Registrando un cliente");
+    @Override
+    public synchronized int registrarCliente(InterfazCliente cliente, String Nombre, String password) throws RemoteException{
+        
           if (!(clientes.contains(cliente))) {
-            System.out.println("Cliente registrado");
-            clientes.add(cliente);
+            
+            
+            //Server_Ventana ventana = getServer_Ventana();
+            Server_Ventana.getServer_Ventana().Actualizar_Log_Usuario_Conexion(Nombre);
+            ConsultasSQL sql = new ConsultasSQL();
+            int retorno = sql.Iniciar_sesion(Nombre, password);
+            if(retorno>0){
+                clientes.add(cliente);
+            }
+            return retorno;
+                   
             //clientesNombre.addElement(Nombre);
-            for (int i = 0;i < clientes.size();i++){
+            
+            /*for (int i = 0;i < clientes.size();i++){
                 InterfazCliente nextClient = (InterfazCliente)clientes.get(i);
                 
-            }
+            }*/
         }
+          return -1;
     }
       
       
        public synchronized void enviarMensaje(String mensaje) throws RemoteException{
         //clientesNombre.addElement(Nombre);
-           System.out.println("LLegue aca en el servidor");
+           
         for (int i = 0; i <clientes.size();i++){
             InterfazCliente nextClient = (InterfazCliente)clientes.get(i);
                

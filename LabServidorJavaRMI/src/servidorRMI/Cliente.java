@@ -13,7 +13,25 @@ import interfaz.InterfazCliente;
  */
 public class Cliente implements Runnable{
     private String NombreCliente;
+    private String pass;
+    private int id;
     private InterfazCliente cliente;
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+    
+    public String getPass() {
+        return pass;
+    }
+
+    public void setPass(String pass) {
+        this.pass = pass;
+    }
 
     public String getNombreCliente() {
         return NombreCliente;
