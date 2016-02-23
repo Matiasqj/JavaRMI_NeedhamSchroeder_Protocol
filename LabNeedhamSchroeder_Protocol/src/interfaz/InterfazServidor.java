@@ -20,4 +20,5 @@ public interface InterfazServidor extends Remote {
     public void Nada() throws RemoteException;
     //mias
     public void enviarMensaje(String mensaje) throws RemoteException;
+    public  ArrayList<String[]> enviarOnline() throws RemoteException;
 }

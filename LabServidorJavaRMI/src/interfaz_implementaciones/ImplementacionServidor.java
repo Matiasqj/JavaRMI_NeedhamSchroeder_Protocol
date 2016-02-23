@@ -82,18 +82,18 @@ public class ImplementacionServidor extends UnicastRemoteObject implements Inter
        public synchronized void Nada() throws RemoteException{
            System.out.println("hola ");
       }
-       /*
-    public synchronized void enviarOnline(String nombreusuario) throws RemoteException{
+       
+    public synchronized ArrayList<String[]> enviarOnline() throws RemoteException{
         ArrayList<String[]> listaonline = new ArrayList<String[]>();
         int ubicacion=-1;
         for(int i = 0; i< Server_Ventana.getServer_Ventana().Online.size();i++){
-            if(Server_Ventana.getServer_Ventana().Online.get(i).getNombreCliente().equals(nombreusuario))
-                //con esto se quien lo envio
-                ubicacion = i;
+            String[] datos = new String[2];
+            datos[0]= String.valueOf(Server_Ventana.getServer_Ventana().Online.get(i).getId());
+            datos[1]=Server_Ventana.getServer_Ventana().Online.get(i).getNombreCliente();
+            listaonline.add(datos);
+          
         }
-        InterfazCliente nextClient = (InterfazCliente)clientes.get(ubicacion);
-        
-        nextClient.notificar("solo a ti ");
+        return listaonline;
     
-    }*/
+    }
 }
