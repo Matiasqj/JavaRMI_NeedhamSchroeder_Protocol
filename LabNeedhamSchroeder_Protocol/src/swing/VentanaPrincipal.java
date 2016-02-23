@@ -108,7 +108,7 @@ public class VentanaPrincipal extends javax.swing.JFrame {
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
-private ConexionRmi conexion = new ConexionRmi();
+public ConexionRmi conexion = new ConexionRmi();
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         String mensaje = passwordingresado.getText();
         try {
@@ -123,7 +123,7 @@ private ConexionRmi conexion = new ConexionRmi();
                 }
                 else{
                 this.setVisible(true);
-                    new VentanaSecundaria(this, true, this,inicio_sesion,nombreusuario.getText());
+                    new VentanaSecundaria(this, true, this,inicio_sesion,nombreusuario.getText(),conexion);
                 }
                 
             }

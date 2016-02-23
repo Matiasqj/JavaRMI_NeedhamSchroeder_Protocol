@@ -8,6 +8,7 @@ package clientermi;
 import interfaz.InterfazCliente;
 import interfaz.InterfazServidor;
 import interfaz_implementaciones.ImplementacionCliente;
+import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
@@ -25,6 +26,8 @@ public class ConexionRmi {
  *Nombre de la funcion: iniciarRegistry                     *
  *Objetivo: inicia el registro para la conexion RMI         *
  *Parámetros: no tiene                                      *
+     * @return 
+     * @throws java.rmi.RemoteException
  ************************************************************/
 
     public boolean iniciarRegistry() throws RemoteException{
@@ -40,8 +43,7 @@ public class ConexionRmi {
             
             return true;
         }
-        catch(Exception e){
-            e.printStackTrace();
+        catch(RemoteException | NotBoundException e){
             return false;
         }
     }
@@ -58,7 +60,6 @@ public class ConexionRmi {
             registry.list();
         }
         catch(RemoteException e){
-            e.printStackTrace();
         }
     }
     //Con esto no es necesario hacer un lookup al objeto remoto cada vez que deseemos usarlo
@@ -68,6 +69,7 @@ public class ConexionRmi {
  *Nombre de la funcion: getServidor                         *
  *Objetivo: Objener el servidor                             *
  *Parámetros: no tiene                                      *
+     * @return 
  ************************************************************/
     
     public InterfazServidor getServidor(){
@@ -87,6 +89,7 @@ public class ConexionRmi {
  *Objetivo: Ingresar a los clientes conectados al servidor  *
  *y asi mantenerlos notificados de los mensajes             *
  *Parámetros: no tiene                                      *
+     * @param Nombre
  ************************************************************/
     
     public int registrarCliente(String Nombre, String password) throws RemoteException{
@@ -95,4 +98,9 @@ public class ConexionRmi {
         int valor = servidor.registrarCliente(cliente, Nombre,password);
         return valor;
     }
+    
+    public  void enviarmensajeusuario() throws RemoteException{
+        servidor.enviarMensaje("lalo");
+    }
+    
 }

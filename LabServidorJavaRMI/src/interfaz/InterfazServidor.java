@@ -13,7 +13,7 @@ import java.util.ArrayList;
  * @author Matias Quinteros
  */
 public interface InterfazServidor extends Remote {
-     public int registrarCliente(InterfazCliente cliente, String Nombre, String password) throws RemoteException;
+    public int registrarCliente(InterfazCliente cliente, String Nombre, String password) throws RemoteException;
     public ArrayList clientes = new ArrayList();
     public void Nada()throws RemoteException;
     //mias

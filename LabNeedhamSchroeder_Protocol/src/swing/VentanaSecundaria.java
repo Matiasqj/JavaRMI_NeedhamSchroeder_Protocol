@@ -5,6 +5,11 @@
  */
 package swing;
 
+import clientermi.ConexionRmi;
+import java.rmi.RemoteException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 /**
  *
  * @author Matias Quinteros
@@ -17,8 +22,10 @@ public class VentanaSecundaria extends javax.swing.JDialog {
     VentanaPrincipal inicio;
     int id_usuario;
     String nombre_usuario;
-    public VentanaSecundaria(java.awt.Frame parent, boolean modal,VentanaPrincipal inicio_sesion,int id, String nombre) {
+    public ConexionRmi conexion;
+    public VentanaSecundaria(java.awt.Frame parent, boolean modal,VentanaPrincipal inicio_sesion,int id, String nombre,ConexionRmi rmi) {
         super(parent, modal);
+        this.conexion = rmi;
         id_usuario=id;
         nombre_usuario = nombre;
         inicio = inicio_sesion;
@@ -149,7 +156,15 @@ public class VentanaSecundaria extends javax.swing.JDialog {
     }// </editor-fold>//GEN-END:initComponents
 
     private void comenzarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_comenzarActionPerformed
-        // TODO add your handling code here:
+        try {
+            conexion.enviarmensajeusuario();
+        } catch (RemoteException ex) {
+            Logger.getLogger(VentanaSecundaria.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
+        
+        
+        
     }//GEN-LAST:event_comenzarActionPerformed
 
     private void establecercomunicacionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_establecercomunicacionActionPerformed

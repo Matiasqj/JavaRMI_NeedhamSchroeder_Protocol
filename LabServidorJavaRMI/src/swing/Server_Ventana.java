@@ -14,12 +14,14 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 import javax.swing.JTextArea;
 import javax.swing.table.DefaultTableModel;
 import mysql.ConexionMySQL;
+import servidorRMI.Cliente;
 import servidorRMI.ConexionRmi;
 
 /**
@@ -33,8 +35,9 @@ public class Server_Ventana extends javax.swing.JFrame {
      */
     ConexionRmi conexion = new ConexionRmi();
     private static Server_Ventana vistaserver;
-
+    public static ArrayList<Cliente> Online;
     public Server_Ventana() {
+        Online = new ArrayList<Cliente>();
         initComponents();
         vistaserver = this;
         buttondetener.setEnabled(false);

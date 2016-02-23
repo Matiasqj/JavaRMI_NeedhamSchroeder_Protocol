@@ -14,6 +14,7 @@ import java.sql.ResultSet;
 import java.sql.Statement;
 import java.util.ArrayList;
 import mysql.ConsultasSQL;
+import servidorRMI.Cliente;
 import swing.Server_Ventana;
 
 /**
@@ -42,7 +43,13 @@ public class ImplementacionServidor extends UnicastRemoteObject implements Inter
             ConsultasSQL sql = new ConsultasSQL();
             int retorno = sql.Iniciar_sesion(Nombre, password);
             if(retorno>0){
+                
                 clientes.add(cliente);
+                Cliente client_nuevo = new Cliente();
+                client_nuevo.setId(retorno);
+                client_nuevo.setNombreCliente(Nombre);
+                client_nuevo.setPass(password);
+                Server_Ventana.getServer_Ventana().Online.add(client_nuevo);
             }
             return retorno;
                    
@@ -60,15 +67,33 @@ public class ImplementacionServidor extends UnicastRemoteObject implements Inter
        public synchronized void enviarMensaje(String mensaje) throws RemoteException{
         //clientesNombre.addElement(Nombre);
            
-        for (int i = 0; i <clientes.size();i++){
-            InterfazCliente nextClient = (InterfazCliente)clientes.get(i);
-               
-            nextClient.notificar(mensaje);
-        }  
+       ArrayList<String[]> listaonline = new ArrayList<String[]>();
+        int ubicacion=-1;
+        for(int i = 0; i< Server_Ventana.getServer_Ventana().Online.size();i++){
+            if(Server_Ventana.getServer_Ventana().Online.get(i).getNombreCliente().equals(mensaje))
+                //con esto se quien lo envio
+                ubicacion = i;
+        }
+        InterfazCliente nextClient = (InterfazCliente)clientes.get(ubicacion);
+        
+        nextClient.notificar("solo a ti ");
     } 
       
        public synchronized void Nada() throws RemoteException{
            System.out.println("hola ");
       }
+       /*
+    public synchronized void enviarOnline(String nombreusuario) throws RemoteException{
+        ArrayList<String[]> listaonline = new ArrayList<String[]>();
+        int ubicacion=-1;
+        for(int i = 0; i< Server_Ventana.getServer_Ventana().Online.size();i++){
+            if(Server_Ventana.getServer_Ventana().Online.get(i).getNombreCliente().equals(nombreusuario))
+                //con esto se quien lo envio
+                ubicacion = i;
+        }
+        InterfazCliente nextClient = (InterfazCliente)clientes.get(ubicacion);
+        
+        nextClient.notificar("solo a ti ");
     
+    }*/
 }
