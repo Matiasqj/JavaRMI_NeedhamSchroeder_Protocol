@@ -16,6 +16,8 @@ import java.util.ArrayList;
 import mysql.ConsultasSQL;
 import servidorRMI.Cliente;
 import swing.Server_Ventana;
+import util.DES;
+import util.Random;
 
 /**
  *
@@ -96,4 +98,35 @@ public class ImplementacionServidor extends UnicastRemoteObject implements Inter
         return listaonline;
     
     }
+    
+    
+     public synchronized String paso2(String usuario,String usuario_destino, String nonce){
+        DES des = new DES();
+        Random rd = new Random();
+        int ck = rd.GenerarClaveSesion();
+         //System.out.println("ck generado:"+ck);
+        Server_Ventana.getServer_Ventana().Actualizar_Log("Recibido mensaje de: "+usuario);
+        Server_Ventana.getServer_Ventana().Actualizar_Log("Generada Ck: "+ck+" para el usuario"+usuario);
+        String plano_KB = ""+ck+"#servidor#"+usuario;
+        int posicion_destino = Server_Ventana.getServer_Ventana().Busca_Usuario_posicion(usuario_destino);
+        int posicion_usuario = Server_Ventana.getServer_Ventana().Busca_Usuario_posicion(usuario);
+        if(posicion_destino==-1 || posicion_usuario==-1){
+            return null;
+        }
+        else{
+            String keyB = Server_Ventana.getServer_Ventana().Online.get(posicion_destino).getPass();
+            
+            String encriptado_KB = des.encriptado(keyB, plano_KB);
+            Server_Ventana.getServer_Ventana().Actualizar_Log("Encriptando con clave de B");
+            Server_Ventana.getServer_Ventana().Actualizar_Log("Obtenido: "+encriptado_KB);
+            String plano_KA = ""+nonce+"#servidor#"+usuario_destino+"#servidor#"+String.valueOf(ck)+"#servidor#"+encriptado_KB;
+            String mostrarKA = plano_KA.replace("#servidor#", " , ");
+            Server_Ventana.getServer_Ventana().Actualizar_Log("Encriptando texto plano a enviar : "+mostrarKA);
+            String keyA = Server_Ventana.getServer_Ventana().Online.get(posicion_usuario).getPass();
+            String encriptado_KA = des.encriptado(keyA, plano_KA);
+            Server_Ventana.getServer_Ventana().Actualizar_Log("Enviando al usuario :"+usuario+" el texto encriptado: "+encriptado_KA);
+            return encriptado_KA;
+        }
+        
+     }
 }

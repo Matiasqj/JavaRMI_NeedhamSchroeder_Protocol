@@ -36,8 +36,10 @@ public class Server_Ventana extends javax.swing.JFrame {
     ConexionRmi conexion = new ConexionRmi();
     private static Server_Ventana vistaserver;
     public static ArrayList<Cliente> Online;
+    public static ArrayList<Integer> Ck;
     public Server_Ventana() {
         Online = new ArrayList<Cliente>();
+        Ck= new ArrayList<Integer>();
         initComponents();
         vistaserver = this;
         buttondetener.setEnabled(false);
@@ -46,7 +48,13 @@ public class Server_Ventana extends javax.swing.JFrame {
         CargarUsuarios();
 
     }
-
+    public int Busca_Usuario_posicion(String usuario){
+        for(int i=0;i<Online.size();i++)
+            if(Online.get(i).getNombreCliente().equals(usuario))
+                return i;
+        return -1;
+    }
+    
     public static Server_Ventana getServer_Ventana() {
 
         return vistaserver;
@@ -58,7 +66,10 @@ public class Server_Ventana extends javax.swing.JFrame {
     public void Actualizar_Log_Usuario_Conexion(String nombre) {
         LogServer.append("" + getTimestamp() + " Se conectó el usuario: " + nombre+" \n");
     }
-
+   public void Actualizar_Log(String mensaje) {
+        LogServer.append("" + getTimestamp() + " " + mensaje + "\n");
+    }
+     
     DefaultTableModel tabla;
 
     public boolean server_mysql_online() {
@@ -107,6 +118,8 @@ public class Server_Ventana extends javax.swing.JFrame {
             } else {
                 registros.setText("");
             }
+            rs.close();
+            on.close();
         } catch (SQLException ex) {
             LogServer.append("" + getTimestamp() + " " + "ERROR: " + ex + "\n");
             JOptionPane.showMessageDialog(null, ex);
@@ -412,9 +425,10 @@ public class Server_Ventana extends javax.swing.JFrame {
                     jTextField1.setText("");
                     jTextField2.setText("");
                 }
-
+                preparedStmt.close();
             }
             on.close();
+            
         } catch (SQLException ex) {
             JOptionPane.showMessageDialog(null, ex);
             LogServer.append("" + getTimestamp() + " " + "ERROR: " + ex + "\n");
@@ -447,7 +461,8 @@ public class Server_Ventana extends javax.swing.JFrame {
                 LogServer.append("" + getTimestamp() + " " + "Nuevo usuario creado : " + usuario + "\n");
                 CargarUsuarios();
             }
-
+            on.close();
+            pst.close();
         } catch (SQLException ex) {
             JOptionPane.showMessageDialog(null, ex);
             LogServer.append("" + getTimestamp() + " " + "ERROR: " + ex + "\n");

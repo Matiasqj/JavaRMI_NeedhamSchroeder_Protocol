@@ -14,6 +14,7 @@ import util.DES;
  */
 public class Main {
      public static void main(String args[]) {
+         /*
          DES des = new DES();
          String llave ="piola";
          String texto_plano = "holamundo";
@@ -29,7 +30,7 @@ public class Main {
              
              System.out.println("desencriptado:"+desencriptado);
             
-         }
+         }*/
 
          
          new VentanaPrincipal().setVisible(true);

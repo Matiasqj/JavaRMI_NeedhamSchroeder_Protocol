@@ -26,8 +26,9 @@ public class ImplementacionCliente extends UnicastRemoteObject implements Interf
  *Parámetros: el mensaje                                    *
  ************************************************************/
     
-    public void notificar(String mensaje) throws RemoteException{
+    public synchronized void notificar(String mensaje) throws RemoteException{
         System.out.println("mensaje recibido: "+mensaje);
+        //aqui actualizar datos de ventana secundaria
     }
        
 }

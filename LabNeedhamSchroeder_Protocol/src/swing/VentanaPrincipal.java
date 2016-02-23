@@ -11,6 +11,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 import javax.swing.JTextField;
+import util.Random;
 
 /**
  *
@@ -122,8 +123,10 @@ public ConexionRmi conexion = new ConexionRmi();
                     JOptionPane.showMessageDialog(null, "Contraseña o usuario incorrecto");
                 }
                 else{
-                this.setVisible(true);
-                    new VentanaSecundaria(this, true, this,inicio_sesion,nombreusuario.getText(),conexion);
+                    this.setVisible(true);
+                    Random rd = new Random();
+                    int nonce = rd.Generar_nonce();
+                    new VentanaSecundaria(this, true, this,inicio_sesion,nombreusuario.getText(),conexion,nonce);
                 }
                 
             }

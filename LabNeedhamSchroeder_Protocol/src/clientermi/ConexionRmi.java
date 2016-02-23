@@ -101,9 +101,13 @@ public class ConexionRmi {
     }
     
     public  void enviarmensajeusuario() throws RemoteException{
-        servidor.enviarMensaje("lalo");
+        servidor.enviarMensaje("kkk");
     }
     public ArrayList<String[]> getOnlineUsers() throws RemoteException{
         return servidor.enviarOnline();
     } 
+    
+    public String getPaso2Results(String usuario,String usario_destino,String nonce) throws RemoteException{
+        return servidor.paso2(usuario,usario_destino,nonce);
+    }
 }

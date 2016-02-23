@@ -8,9 +8,12 @@ package swing;
 import clientermi.ConexionRmi;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
+import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.DefaultListModel;
+import javax.swing.JOptionPane;
+import util.DES;
 
 /**
  *
@@ -25,40 +28,56 @@ public class VentanaSecundaria extends javax.swing.JDialog {
     int id_usuario;
     String nombre_usuario;
     public ConexionRmi conexion;
-    public VentanaSecundaria(java.awt.Frame parent, boolean modal,VentanaPrincipal inicio_sesion,int id, String nombre,ConexionRmi rmi) {
+    int mi_nonce;
+    private static VentanaSecundaria secundaria;
+
+    public VentanaSecundaria(java.awt.Frame parent, boolean modal, VentanaPrincipal inicio_sesion, int id, String nombre, ConexionRmi rmi, int nonce) {
         super(parent, modal);
         this.conexion = rmi;
-        id_usuario=id;
+        id_usuario = id;
         nombre_usuario = nombre;
         inicio = inicio_sesion;
+        mi_nonce = nonce;
+
         initComponents();
-        jLabel1.setText("Bienvenido "+nombre);
+        jLabel1.setText("Bienvenido " + nombre);
         CargarListaOnline(nombre);
-         this.setLocationRelativeTo(null);
+        comenzar.setEnabled(false);
+        paso2.setEnabled(false);
+        paso3.setEnabled(false);
+        paso4.setEnabled(false);
+        secundaria = this;
+
+        this.setLocationRelativeTo(null);
         this.setVisible(modal);
     }
     DefaultListModel modelo_lista;
+
+    public VentanaSecundaria getVentanaSecundaria() {
+        return secundaria;
+    }
+
     public void CargarListaOnline(String minombre) {
         modelo_lista = new DefaultListModel();
-        try{
+        try {
             ArrayList<String[]> lista = conexion.getOnlineUsers();
-            for(int i=0;i<lista.size();i++){
+            for (int i = 0; i < lista.size(); i++) {
                 String auxiliar[] = lista.get(i);
                 //System.out.println(""+auxiliar[1]);
-                if(!auxiliar[1].equals(minombre))
+                if (!auxiliar[1].equals(minombre)) {
                     modelo_lista.addElement(auxiliar[1]);
+                }
             }
-            if(modelo_lista.getSize()==0)
+            if (modelo_lista.getSize() == 0) {
                 modelo_lista.addElement("No hay usuarios online");
+            }
             jList1.setModel(modelo_lista);
-        }
-        catch(RemoteException ex){
+        } catch (RemoteException ex) {
             System.out.println("error al cargar la lista");
         }
-        
-        
-    
+
     }
+
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -79,6 +98,10 @@ public class VentanaSecundaria extends javax.swing.JDialog {
         jLabel3 = new javax.swing.JLabel();
         CerrarSesion = new javax.swing.JButton();
         infotext = new javax.swing.JLabel();
+        refresh = new javax.swing.JButton();
+        paso2 = new javax.swing.JButton();
+        paso3 = new javax.swing.JButton();
+        paso4 = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
@@ -89,13 +112,13 @@ public class VentanaSecundaria extends javax.swing.JDialog {
         jLabel2.setText("Usuarios Online:");
 
         establecercomunicacion.setText("Establecer Comunicación");
-        establecercomunicacion.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                establecercomunicacionActionPerformed(evt);
+        establecercomunicacion.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                establecercomunicacionMouseClicked(evt);
             }
         });
 
-        comenzar.setText("Comenzar");
+        comenzar.setText("Comenzar Chat");
         comenzar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 comenzarActionPerformed(evt);
@@ -119,6 +142,34 @@ public class VentanaSecundaria extends javax.swing.JDialog {
 
         infotext.setText("Para establecer comunicación con un usuario seleccione uno de la lista y presione Comenzar");
 
+        refresh.setText("Refrescar Lista");
+        refresh.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                refreshActionPerformed(evt);
+            }
+        });
+
+        paso2.setText("Ver_Paso2");
+        paso2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                paso2ActionPerformed(evt);
+            }
+        });
+
+        paso3.setText("Iniciar paso 3");
+        paso3.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                paso3ActionPerformed(evt);
+            }
+        });
+
+        paso4.setText("Recibido paso 4  Responder");
+        paso4.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                paso4ActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -129,22 +180,35 @@ public class VentanaSecundaria extends javax.swing.JDialog {
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 231, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jLabel2))
+                            .addComponent(jLabel2)
+                            .addComponent(refresh)
+                            .addComponent(establecercomunicacion))
                         .addGap(18, 18, 18)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel3)
-                            .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 287, Short.MAX_VALUE)))
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 252, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(CerrarSesion))
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(jLabel3)
+                                .addContainerGap(281, Short.MAX_VALUE))
+                            .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 384, Short.MAX_VALUE)))
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(establecercomunicacion)
-                            .addComponent(infotext, javax.swing.GroupLayout.PREFERRED_SIZE, 475, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(comenzar))
-                        .addGap(0, 0, Short.MAX_VALUE)))
-                .addContainerGap())
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(infotext, javax.swing.GroupLayout.PREFERRED_SIZE, 475, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(0, 0, Short.MAX_VALUE))
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 252, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(CerrarSesion)))
+                        .addContainerGap())))
+            .addGroup(layout.createSequentialGroup()
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(comenzar)
+                    .addGroup(layout.createSequentialGroup()
+                        .addContainerGap()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(paso2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(paso3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(paso4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
+                .addGap(0, 0, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -158,16 +222,25 @@ public class VentanaSecundaria extends javax.swing.JDialog {
                     .addComponent(jLabel2)
                     .addComponent(jLabel3))
                 .addGap(18, 18, 18)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 34, Short.MAX_VALUE)
-                .addComponent(establecercomunicacion)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 116, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(11, 11, 11)
+                        .addComponent(refresh)
+                        .addGap(18, 18, 18)
+                        .addComponent(establecercomunicacion))
+                    .addComponent(jScrollPane2))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(infotext, javax.swing.GroupLayout.PREFERRED_SIZE, 15, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(paso2)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(paso3)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(paso4)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 95, Short.MAX_VALUE)
                 .addComponent(comenzar)
-                .addGap(52, 52, 52))
+                .addContainerGap())
         );
 
         pack();
@@ -179,19 +252,103 @@ public class VentanaSecundaria extends javax.swing.JDialog {
         } catch (RemoteException ex) {
             Logger.getLogger(VentanaSecundaria.class.getName()).log(Level.SEVERE, null, ex);
         }
-        
-        
-        
-        
-    }//GEN-LAST:event_comenzarActionPerformed
 
-    private void establecercomunicacionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_establecercomunicacionActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_establecercomunicacionActionPerformed
+
+    }//GEN-LAST:event_comenzarActionPerformed
 
     private void CerrarSesionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_CerrarSesionActionPerformed
         this.setVisible(false);
     }//GEN-LAST:event_CerrarSesionActionPerformed
+
+    private void refreshActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_refreshActionPerformed
+        jList1.removeAll();
+        CargarListaOnline(nombre_usuario);
+    }//GEN-LAST:event_refreshActionPerformed
+    public String ck = "";
+    public String mensajepaso2 = "";
+    public String usuario_destino ="";
+    private void establecercomunicacionMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_establecercomunicacionMouseClicked
+        String usuario = "";
+        try {
+            usuario = (String) jList1.getSelectedValue();
+            usuario_destino=usuario;
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(rootPane, "Debe seleccionar un usuario de la lista");
+        }
+        if (usuario == null || usuario.equals("")) {
+            JOptionPane.showMessageDialog(rootPane, "Debe seleccionar un usuario de la lista");
+        } else {
+            try {
+
+                Logmensajes.append("Intentado comunicación con el servidor" + "\n");
+                Logmensajes.append("Nonce generado : " + mi_nonce + "\n");
+                Logmensajes.append("Enviando al servidor, usuario: " + nombre_usuario + ", usuario destino: " + usuario + ", nonce: " + mi_nonce + "\n");
+
+                String stringpaso2 = conexion.getPaso2Results(nombre_usuario, usuario, String.valueOf(mi_nonce));
+                DES des = new DES();
+                String pa2 = des.desencriptado("1", stringpaso2);
+                if (pa2 == null) {
+                    Logmensajes.append("Ocurrió un error en la comunicación\n");
+                } else {
+                    Logmensajes.append("Recibido del servidor :" + pa2.replace("#servidor#", " , ") + "\n");
+                    Logmensajes.append("Desencriptando con clave... \n");
+                    Scanner s = new Scanner(pa2).useDelimiter("#servidor#");
+                    Logmensajes.append("( ");
+                    int k = 0;
+
+                    while (s.hasNext()) {
+
+                        if (k == 2) {
+                            ck = s.next();
+                            Logmensajes.append(ck + " , ");
+                        } else if (k == 3) {
+                            mensajepaso2 = s.next();
+                            Logmensajes.append(mensajepaso2 + " )");
+                        } else {
+                            Logmensajes.append(s.next() + " , ");
+                        }
+                        k++;
+
+                    }
+
+                    s.close();
+                    System.out.println(""+des.desencriptado("1", mensajepaso2));
+                    Logmensajes.append("\n");
+                    paso2.setEnabled(true);
+                    paso3.setEnabled(true);
+                }
+
+            //System.out.println("desencriptado con kA: "+pa2);
+                // System.out.println("desencriptado con kb"+des.desencriptado("1", pa2));
+                //aqui envio al servidor
+                //System.out.println(""+paso1_datos[0]+" "+paso1_datos[1]+" "+" "+paso1_datos[2]);
+            } catch (RemoteException ex) {
+                Logger.getLogger(VentanaSecundaria.class.getName()).log(Level.SEVERE, null, ex);
+            }
+
+        }
+        //si se selecciono el usuario entonces envio mi nonce, usario y destino
+
+    }//GEN-LAST:event_establecercomunicacionMouseClicked
+
+    private void paso2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_paso2ActionPerformed
+        // TODO add your handling code here:
+        System.out.println("sii");
+    }//GEN-LAST:event_paso2ActionPerformed
+
+    private void paso3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_paso3ActionPerformed
+        // TODO add your handling code here:
+        Logmensajes.append("Enviando al usuario : "+usuario_destino+" CK y "+nombre_usuario+" encriptado con KB: "+mensajepaso2+"\n");
+        System.out.println("sii");
+        
+        
+        
+    }//GEN-LAST:event_paso3ActionPerformed
+
+    private void paso4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_paso4ActionPerformed
+        // TODO add your handling code here:
+        System.out.println("sii");
+    }//GEN-LAST:event_paso4ActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -206,5 +363,9 @@ public class VentanaSecundaria extends javax.swing.JDialog {
     private javax.swing.JList jList1;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
+    private javax.swing.JButton paso2;
+    private javax.swing.JButton paso3;
+    private javax.swing.JButton paso4;
+    private javax.swing.JButton refresh;
     // End of variables declaration//GEN-END:variables
 }
