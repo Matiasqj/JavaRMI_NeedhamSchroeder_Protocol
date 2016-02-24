@@ -20,4 +20,5 @@ public interface InterfazServidor extends Remote {
     public void enviarMensaje(String mensaje) throws RemoteException;
     public  ArrayList<String[]> enviarOnline() throws RemoteException;
     public String paso2(String usuario,String usuario_destino, String nonce) throws RemoteException;
+    public  InterfazCliente cliente_mensaje(String usuario)throws RemoteException;
 }

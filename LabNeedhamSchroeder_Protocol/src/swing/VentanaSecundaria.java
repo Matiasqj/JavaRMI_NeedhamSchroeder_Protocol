@@ -6,6 +6,7 @@
 package swing;
 
 import clientermi.ConexionRmi;
+import interfaz.InterfazCliente;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.Scanner;
@@ -25,20 +26,20 @@ public class VentanaSecundaria extends javax.swing.JDialog {
      * Creates new form VentanaSecundaria
      */
     VentanaPrincipal inicio;
-    int id_usuario;
-    String nombre_usuario;
+    public int id_usuario;
+    public String nombre_usuario;
     public ConexionRmi conexion;
     int mi_nonce;
     private static VentanaSecundaria secundaria;
-
-    public VentanaSecundaria(java.awt.Frame parent, boolean modal, VentanaPrincipal inicio_sesion, int id, String nombre, ConexionRmi rmi, int nonce) {
+    public String mipass;
+    public VentanaSecundaria(java.awt.Frame parent, boolean modal, VentanaPrincipal inicio_sesion, int id, String nombre, ConexionRmi rmi, int nonce,String pass) {
         super(parent, modal);
         this.conexion = rmi;
         id_usuario = id;
         nombre_usuario = nombre;
         inicio = inicio_sesion;
         mi_nonce = nonce;
-
+        mipass = pass;
         initComponents();
         jLabel1.setText("Bienvenido " + nombre);
         CargarListaOnline(nombre);
@@ -53,10 +54,15 @@ public class VentanaSecundaria extends javax.swing.JDialog {
     }
     DefaultListModel modelo_lista;
 
-    public VentanaSecundaria getVentanaSecundaria() {
+    public static VentanaSecundaria getVentanaSecundaria() {
         return secundaria;
     }
-
+    public boolean ComprobarUsuario(String usuario){
+        for(int i=0;i<modelo_lista.size();i++)
+            if(modelo_lista.get(i).equals(usuario))
+                return true;
+        return false;
+    }
     public void CargarListaOnline(String minombre) {
         modelo_lista = new DefaultListModel();
         try {
@@ -267,6 +273,66 @@ public class VentanaSecundaria extends javax.swing.JDialog {
     public String ck = "";
     public String mensajepaso2 = "";
     public String usuario_destino ="";
+    public InterfazCliente cliente_a_enviar;
+    public String usuario_que_envio="";
+    public int nonce_recibido;
+    public InterfazCliente usuario_emisor;
+
+    public String getMipass() {
+        return mipass;
+    }
+
+    public void setMipass(String mipass) {
+        this.mipass = mipass;
+    }
+
+    public String getCk() {
+        return ck;
+    }
+
+    public void setCk(String ck) {
+        this.ck = ck;
+    }
+
+    public String getUsuario_destino() {
+        return usuario_destino;
+    }
+
+    public void setUsuario_destino(String usuario_destino) {
+        this.usuario_destino = usuario_destino;
+    }
+
+    public String getUsuario_que_envio() {
+        return usuario_que_envio;
+    }
+
+    public void setUsuario_que_envio(String usuario_que_envio) {
+        this.usuario_que_envio = usuario_que_envio;
+    }
+
+    public InterfazCliente getUsuario_emisor() {
+        return usuario_emisor;
+    }
+
+    public void setUsuario_emisor(InterfazCliente usuario_emisor) {
+        this.usuario_emisor = usuario_emisor;
+    }
+    
+    public void EnableBotonRecibidopaso4(){
+    paso4.setEnabled(true);
+    }
+    public void EnableBotonComenzar(){
+    comenzar.setEnabled(true);
+    }
+    
+    
+    
+    public void ActualizarLogCliente(String mensaje){
+    
+        
+    Logmensajes.append(mensaje+"\n");
+    }
+    
     private void establecercomunicacionMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_establecercomunicacionMouseClicked
         String usuario = "";
         try {
@@ -282,7 +348,7 @@ public class VentanaSecundaria extends javax.swing.JDialog {
 
                 Logmensajes.append("Intentado comunicación con el servidor" + "\n");
                 Logmensajes.append("Nonce generado : " + mi_nonce + "\n");
-                Logmensajes.append("Enviando al servidor, usuario: " + nombre_usuario + ", usuario destino: " + usuario + ", nonce: " + mi_nonce + "\n");
+                Logmensajes.append("Preparando para el servidor, usuario: " + nombre_usuario + ", usuario destino: " + usuario + ", nonce: " + mi_nonce + "\n");
 
                 String stringpaso2 = conexion.getPaso2Results(nombre_usuario, usuario, String.valueOf(mi_nonce));
                 DES des = new DES();
@@ -290,6 +356,7 @@ public class VentanaSecundaria extends javax.swing.JDialog {
                 if (pa2 == null) {
                     Logmensajes.append("Ocurrió un error en la comunicación\n");
                 } else {
+                    cliente_a_enviar = conexion.getServidor().cliente_mensaje(usuario_destino);
                     Logmensajes.append("Recibido del servidor :" + pa2.replace("#servidor#", " , ") + "\n");
                     Logmensajes.append("Desencriptando con clave... \n");
                     Scanner s = new Scanner(pa2).useDelimiter("#servidor#");
@@ -338,9 +405,13 @@ public class VentanaSecundaria extends javax.swing.JDialog {
 
     private void paso3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_paso3ActionPerformed
         // TODO add your handling code here:
-        Logmensajes.append("Enviando al usuario : "+usuario_destino+" CK y "+nombre_usuario+" encriptado con KB: "+mensajepaso2+"\n");
+        Logmensajes.append("Enviando al usuario : "+usuario_destino+" CK:"+ck+" y mi usuario: "+nombre_usuario+" encriptado con KB: "+mensajepaso2+"\n");
         System.out.println("sii");
-        
+        try {
+            conexion.Notificar(cliente_a_enviar,mensajepaso2);
+        } catch (RemoteException ex) {
+            Logger.getLogger(VentanaSecundaria.class.getName()).log(Level.SEVERE, null, ex);
+        }
         
         
     }//GEN-LAST:event_paso3ActionPerformed

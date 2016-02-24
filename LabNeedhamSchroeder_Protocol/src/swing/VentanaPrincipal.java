@@ -126,7 +126,7 @@ public ConexionRmi conexion = new ConexionRmi();
                     this.setVisible(true);
                     Random rd = new Random();
                     int nonce = rd.Generar_nonce();
-                    new VentanaSecundaria(this, true, this,inicio_sesion,nombreusuario.getText(),conexion,nonce);
+                    new VentanaSecundaria(this, true, this,inicio_sesion,nombreusuario.getText(),conexion,nonce,passwordingresado.getText());
                 }
                 
             }

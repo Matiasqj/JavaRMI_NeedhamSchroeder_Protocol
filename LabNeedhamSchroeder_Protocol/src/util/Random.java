@@ -13,6 +13,6 @@ import java.util.concurrent.ThreadLocalRandom;
  */
 public class Random {
     public int Generar_nonce(){
-    return ThreadLocalRandom.current().nextInt(1, 10000 + 1);
+    return ThreadLocalRandom.current().nextInt(0, 1000);
     }
 }

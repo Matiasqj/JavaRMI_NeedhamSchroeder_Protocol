@@ -110,4 +110,9 @@ public class ConexionRmi {
     public String getPaso2Results(String usuario,String usario_destino,String nonce) throws RemoteException{
         return servidor.paso2(usuario,usario_destino,nonce);
     }
+    
+    public void Notificar(InterfazCliente cliente_a_enviar,String mensaje ) throws RemoteException{
+        cliente_a_enviar.notificar(mensaje,cliente);
+    }
+    
 }

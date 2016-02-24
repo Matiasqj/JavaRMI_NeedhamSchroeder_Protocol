@@ -13,6 +13,6 @@ import java.util.concurrent.ThreadLocalRandom;
  */
 public class Random {
     public int GenerarClaveSesion(){
-    return ThreadLocalRandom.current().nextInt(10002, 20000 + 1);
+    return ThreadLocalRandom.current().nextInt(1001, 2001);
     }
 }

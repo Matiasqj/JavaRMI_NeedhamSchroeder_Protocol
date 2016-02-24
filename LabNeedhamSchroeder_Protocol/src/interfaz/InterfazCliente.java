@@ -13,6 +13,6 @@ import java.rmi.RemoteException;
  * @author Matias Quinteros
  */
 public interface InterfazCliente extends Remote{
-    public void notificar(String mensaje) throws RemoteException;
+    public void notificar(String mensaje,InterfazCliente cliente_que_envio) throws RemoteException;
 
 }

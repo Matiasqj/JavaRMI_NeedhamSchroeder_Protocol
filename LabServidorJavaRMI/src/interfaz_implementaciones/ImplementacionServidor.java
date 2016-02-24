@@ -65,6 +65,25 @@ public class ImplementacionServidor extends UnicastRemoteObject implements Inter
           return -1;
     }
       
+      public synchronized InterfazCliente cliente_mensaje(String usuario)throws RemoteException{
+       int ubicacion=-1;
+        for(int i = 0; i< Server_Ventana.getServer_Ventana().Online.size();i++){
+            if(Server_Ventana.getServer_Ventana().Online.get(i).getNombreCliente().equals(usuario))
+                //con esto se quien lo envio
+                ubicacion = i;
+        }
+        InterfazCliente nextClient;
+        if(ubicacion!=-1)
+            nextClient = (InterfazCliente)clientes.get(ubicacion);
+        else
+            nextClient=null;
+        
+        return nextClient;
+      
+      
+      }
+      
+      
       
        public synchronized void enviarMensaje(String mensaje) throws RemoteException{
         //clientesNombre.addElement(Nombre);
@@ -78,7 +97,7 @@ public class ImplementacionServidor extends UnicastRemoteObject implements Inter
         }
         InterfazCliente nextClient = (InterfazCliente)clientes.get(ubicacion);
         
-        nextClient.notificar("solo a ti ");
+        //nextClient.notificar("solo a ti ");
     } 
       
        public synchronized void Nada() throws RemoteException{
