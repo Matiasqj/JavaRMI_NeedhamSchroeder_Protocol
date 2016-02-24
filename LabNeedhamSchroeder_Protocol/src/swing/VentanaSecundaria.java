@@ -29,7 +29,7 @@ public class VentanaSecundaria extends javax.swing.JDialog {
     public int id_usuario;
     public String nombre_usuario;
     public ConexionRmi conexion;
-    int mi_nonce;
+    public int mi_nonce;
     private static VentanaSecundaria secundaria;
     public String mipass;
     public VentanaSecundaria(java.awt.Frame parent, boolean modal, VentanaPrincipal inicio_sesion, int id, String nombre, ConexionRmi rmi, int nonce,String pass) {
@@ -47,6 +47,7 @@ public class VentanaSecundaria extends javax.swing.JDialog {
         paso2.setEnabled(false);
         paso3.setEnabled(false);
         paso4.setEnabled(false);
+        paso5.setEnabled(false);
         secundaria = this;
 
         this.setLocationRelativeTo(null);
@@ -108,6 +109,7 @@ public class VentanaSecundaria extends javax.swing.JDialog {
         paso2 = new javax.swing.JButton();
         paso3 = new javax.swing.JButton();
         paso4 = new javax.swing.JButton();
+        paso5 = new javax.swing.JToggleButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
@@ -162,7 +164,7 @@ public class VentanaSecundaria extends javax.swing.JDialog {
             }
         });
 
-        paso3.setText("Iniciar paso 3");
+        paso3.setText("Iniciar paso 3 {CK,A} clave: KB");
         paso3.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 paso3ActionPerformed(evt);
@@ -173,6 +175,13 @@ public class VentanaSecundaria extends javax.swing.JDialog {
         paso4.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 paso4ActionPerformed(evt);
+            }
+        });
+
+        paso5.setText("Recibido paso 5 Responder con {Ib-1} clave CK");
+        paso5.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                paso5ActionPerformed(evt);
             }
         });
 
@@ -204,17 +213,16 @@ public class VentanaSecundaria extends javax.swing.JDialog {
                                 .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 252, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                 .addComponent(CerrarSesion)))
-                        .addContainerGap())))
-            .addGroup(layout.createSequentialGroup()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(comenzar)
+                        .addContainerGap())
                     .addGroup(layout.createSequentialGroup()
-                        .addContainerGap()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(paso2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(paso3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(paso4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
-                .addGap(0, 0, Short.MAX_VALUE))
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                .addComponent(paso2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(paso3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(paso4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(paso5, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                            .addComponent(comenzar))
+                        .addGap(0, 0, Short.MAX_VALUE))))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -244,7 +252,9 @@ public class VentanaSecundaria extends javax.swing.JDialog {
                 .addComponent(paso3)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(paso4)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 95, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(paso5)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 66, Short.MAX_VALUE)
                 .addComponent(comenzar)
                 .addContainerGap())
         );
@@ -253,11 +263,9 @@ public class VentanaSecundaria extends javax.swing.JDialog {
     }// </editor-fold>//GEN-END:initComponents
 
     private void comenzarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_comenzarActionPerformed
-        try {
-            conexion.enviarmensajeusuario();
-        } catch (RemoteException ex) {
-            Logger.getLogger(VentanaSecundaria.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        
+            JOptionPane.showMessageDialog(rootPane, "Comunicación confiable!");
+        
 
 
     }//GEN-LAST:event_comenzarActionPerformed
@@ -277,6 +285,14 @@ public class VentanaSecundaria extends javax.swing.JDialog {
     public String usuario_que_envio="";
     public int nonce_recibido;
     public InterfazCliente usuario_emisor;
+
+    public int getNonce_recibido() {
+        return nonce_recibido;
+    }
+
+    public void setNonce_recibido(int nonce_recibido) {
+        this.nonce_recibido = nonce_recibido;
+    }
 
     public String getMipass() {
         return mipass;
@@ -320,6 +336,9 @@ public class VentanaSecundaria extends javax.swing.JDialog {
     
     public void EnableBotonRecibidopaso4(){
     paso4.setEnabled(true);
+    }
+    public void EnableBotonRecibidopaso5(){
+    paso5.setEnabled(true);
     }
     public void EnableBotonComenzar(){
     comenzar.setEnabled(true);
@@ -419,7 +438,38 @@ public class VentanaSecundaria extends javax.swing.JDialog {
     private void paso4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_paso4ActionPerformed
         // TODO add your handling code here:
         System.out.println("sii");
+        Logmensajes.append("Respondiendo el mensaje a : "+usuario_que_envio+"\n");
+        Logmensajes.append("Encriptando mi nonce: "+mi_nonce+"con CK del servidor : "+ck+"\n");
+        DES des = new DES();
+        String mensaje_encriptado= des.encriptado(ck, String.valueOf(mi_nonce));
+        Logmensajes.append("El mensaje encriptado a enviar es: "+mensaje_encriptado+"\n");
+        
+        try {
+            conexion.ResponderPaso4(usuario_emisor,mensaje_encriptado);
+        } catch (RemoteException ex) {
+            Logger.getLogger(VentanaSecundaria.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
     }//GEN-LAST:event_paso4ActionPerformed
+
+    private void paso5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_paso5ActionPerformed
+        // TODO add your handling code here:
+        System.out.println("ssss");
+        Logmensajes.append("Enviando a : "+usuario_destino+ "su nonce-1"+"\n");
+        int nonce_aenviar = nonce_recibido-1;
+        Logmensajes.append("Nonce recibido del paso 4: "+nonce_recibido+" nonce -1: "+nonce_aenviar+"\n");
+        DES des = new DES();
+        
+        String mensaje_encriptado = des.encriptado(ck,String.valueOf(nonce_aenviar) );
+        Logmensajes.append("Enviado el mensaje encriptado: "+mensaje_encriptado+"\n");
+        try {
+            conexion.ResponderPaso5(conexion.getCliente(),mensaje_encriptado);
+        } catch (RemoteException ex) {
+            //Logger.getLogger(VentanaSecundaria.class.getName()).log(Level.SEVERE, null, ex);
+            Logmensajes.append("Ocurrio un error al enviar para el paso 5 \n");
+        }
+        
+    }//GEN-LAST:event_paso5ActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -437,6 +487,7 @@ public class VentanaSecundaria extends javax.swing.JDialog {
     private javax.swing.JButton paso2;
     private javax.swing.JButton paso3;
     private javax.swing.JButton paso4;
+    private javax.swing.JToggleButton paso5;
     private javax.swing.JButton refresh;
     // End of variables declaration//GEN-END:variables
 }

@@ -30,6 +30,7 @@ public class ImplementacionCliente extends UnicastRemoteObject implements Interf
  ************************************************************/
     
     public synchronized void notificar(String mensaje,InterfazCliente cliente_que_envio) throws RemoteException{
+        
         System.out.println("Implementacion cliente : mensaje recibido: "+mensaje);
         VentanaSecundaria.getVentanaSecundaria().CargarListaOnline(VentanaSecundaria.getVentanaSecundaria().nombre_usuario);
         //me llega el mensaje de un cliente
@@ -53,6 +54,7 @@ public class ImplementacionCliente extends UnicastRemoteObject implements Interf
             System.out.println("aab"+comprobar);
          if(comprobar==true){
          //Se actualiza el log
+             VentanaSecundaria.getVentanaSecundaria().ActualizarLogCliente("Un usuario se quiere comunicar");
              VentanaSecundaria.getVentanaSecundaria().ActualizarLogCliente("Recibido un mensaje : "+mensaje);
              VentanaSecundaria.getVentanaSecundaria().ActualizarLogCliente("Desencriptando mensaje...");
              VentanaSecundaria.getVentanaSecundaria().ActualizarLogCliente("Resultado: "+mensaje_desencriptado.replace("#servidor#", " , "));
@@ -68,5 +70,81 @@ public class ImplementacionCliente extends UnicastRemoteObject implements Interf
       
         
     }
-       
+    
+    
+     public synchronized void notificar_paso4(String mensaje,InterfazCliente cliente_que_envio) throws RemoteException{
+         VentanaSecundaria.getVentanaSecundaria().CargarListaOnline(VentanaSecundaria.getVentanaSecundaria().nombre_usuario);
+         DES des = new DES();
+         try{
+         String mensaje_desencriptado = des.desencriptado(VentanaSecundaria.getVentanaSecundaria().getCk(), mensaje);
+          if(mensaje_desencriptado!=null){
+              VentanaSecundaria.getVentanaSecundaria().setNonce_recibido(Integer.valueOf(mensaje_desencriptado));
+           VentanaSecundaria.getVentanaSecundaria().ActualizarLogCliente("Se recibió el mensaje de respuesta encriptado :"+mensaje);
+           VentanaSecundaria.getVentanaSecundaria().ActualizarLogCliente("Se desencripta el mensaje con la clave ck : "+ VentanaSecundaria.getVentanaSecundaria().getCk());
+           VentanaSecundaria.getVentanaSecundaria().ActualizarLogCliente("Obtenido como resultado el nonce B: "+mensaje_desencriptado);
+            VentanaSecundaria.getVentanaSecundaria().EnableBotonRecibidopaso5();
+          }
+          else{
+           VentanaSecundaria.getVentanaSecundaria().ActualizarLogCliente("se recibió un mensaje que no se pudo desencriptar");
+          }
+              
+         
+         
+         }
+         catch(Exception e){
+         
+         }
+     }
+     
+     
+      public synchronized void notificar_paso5(String mensaje,InterfazCliente cliente_que_envio) throws RemoteException{
+         
+         VentanaSecundaria.getVentanaSecundaria().CargarListaOnline(VentanaSecundaria.getVentanaSecundaria().nombre_usuario);
+         DES des = new DES();
+         try{
+         VentanaSecundaria.getVentanaSecundaria().ActualizarLogCliente("Se recibió un mensaje del paso 5");
+         VentanaSecundaria.getVentanaSecundaria().ActualizarLogCliente("Mensaje recibido: "+mensaje);
+         VentanaSecundaria.getVentanaSecundaria().ActualizarLogCliente("Desencriptando con ck");
+         
+         String mensaje_desencriptado = des.desencriptado(VentanaSecundaria.getVentanaSecundaria().getCk(), mensaje);
+         VentanaSecundaria.getVentanaSecundaria().ActualizarLogCliente("mensaje desencriptado"+mensaje_desencriptado);
+         if(mensaje_desencriptado!=null){
+              //se comprueba el mensaje
+           int mi_nonce = VentanaSecundaria.getVentanaSecundaria().mi_nonce;
+           int nonce_recibido = Integer.valueOf(mensaje_desencriptado);
+           VentanaSecundaria.getVentanaSecundaria().ActualizarLogCliente("Comprobando nonce-1 obtenido: "+nonce_recibido +" con mi nonce: "+mi_nonce);
+           if(nonce_recibido==mi_nonce-1){
+              VentanaSecundaria.getVentanaSecundaria().ActualizarLogCliente("Nonce-1 aceptado");
+              VentanaSecundaria.getVentanaSecundaria().ActualizarLogCliente("Comunicación aceptada");
+              VentanaSecundaria.getVentanaSecundaria().ActualizarLogCliente("Enviando ACK a emisor");
+              VentanaSecundaria.getVentanaSecundaria().EnableBotonComenzar();
+               cliente_que_envio.Establecer_comunicacion();
+           }
+           else{
+                VentanaSecundaria.getVentanaSecundaria().ActualizarLogCliente("No se aceptó el nonce");
+           }    
+          
+           
+          }
+          else{
+           VentanaSecundaria.getVentanaSecundaria().ActualizarLogCliente("se recibió un mensaje que no se pudo desencriptar");
+          }
+              
+         
+         
+         }
+         catch(Exception e){
+        
+         }
+     }
+      
+      public void Establecer_comunicacion() throws RemoteException{
+        VentanaSecundaria.getVentanaSecundaria().ActualizarLogCliente("Paso 5 completado y aceptado \n");
+        VentanaSecundaria.getVentanaSecundaria().ActualizarLogCliente("Es posible establecer comunicación confiable\n");
+        VentanaSecundaria.getVentanaSecundaria().EnableBotonComenzar();
+      }
+     
+     
+     
+    
 }

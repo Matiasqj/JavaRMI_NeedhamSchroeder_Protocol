@@ -56,21 +56,19 @@
                       </Group>
                       <EmptySpace max="-2" attributes="0"/>
                   </Group>
-              </Group>
-          </Group>
-          <Group type="102" attributes="0">
-              <Group type="103" groupAlignment="0" attributes="0">
-                  <Component id="comenzar" alignment="0" min="-2" max="-2" attributes="0"/>
                   <Group type="102" attributes="0">
-                      <EmptySpace max="-2" attributes="0"/>
-                      <Group type="103" groupAlignment="0" max="-2" attributes="0">
-                          <Component id="paso2" max="32767" attributes="0"/>
-                          <Component id="paso3" max="32767" attributes="0"/>
-                          <Component id="paso4" max="32767" attributes="0"/>
+                      <Group type="103" groupAlignment="0" attributes="0">
+                          <Group type="103" groupAlignment="0" max="-2" attributes="0">
+                              <Component id="paso2" max="32767" attributes="0"/>
+                              <Component id="paso3" max="32767" attributes="0"/>
+                              <Component id="paso4" max="32767" attributes="0"/>
+                              <Component id="paso5" max="32767" attributes="0"/>
+                          </Group>
+                          <Component id="comenzar" alignment="0" min="-2" max="-2" attributes="0"/>
                       </Group>
+                      <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
                   </Group>
               </Group>
-              <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
           </Group>
       </Group>
     </DimensionLayout>
@@ -106,7 +104,9 @@
               <Component id="paso3" min="-2" max="-2" attributes="0"/>
               <EmptySpace max="-2" attributes="0"/>
               <Component id="paso4" min="-2" max="-2" attributes="0"/>
-              <EmptySpace pref="95" max="32767" attributes="0"/>
+              <EmptySpace max="-2" attributes="0"/>
+              <Component id="paso5" min="-2" max="-2" attributes="0"/>
+              <EmptySpace pref="66" max="32767" attributes="0"/>
               <Component id="comenzar" min="-2" max="-2" attributes="0"/>
               <EmptySpace max="-2" attributes="0"/>
           </Group>
@@ -211,7 +211,7 @@
     </Component>
     <Component class="javax.swing.JButton" name="paso3">
       <Properties>
-        <Property name="text" type="java.lang.String" value="Iniciar paso 3"/>
+        <Property name="text" type="java.lang.String" value="Iniciar paso 3 {CK,A} clave: KB"/>
       </Properties>
       <Events>
         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="paso3ActionPerformed"/>
@@ -223,6 +223,14 @@
       </Properties>
       <Events>
         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="paso4ActionPerformed"/>
+      </Events>
+    </Component>
+    <Component class="javax.swing.JToggleButton" name="paso5">
+      <Properties>
+        <Property name="text" type="java.lang.String" value="Recibido paso 5 Responder con {Ib-1} clave CK"/>
+      </Properties>
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="paso5ActionPerformed"/>
       </Events>
     </Component>
   </SubComponents>

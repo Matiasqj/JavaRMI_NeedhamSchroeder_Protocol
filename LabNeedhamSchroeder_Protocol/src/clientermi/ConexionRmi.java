@@ -13,6 +13,7 @@ import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.util.ArrayList;
+import swing.VentanaSecundaria;
 
 /**
  *
@@ -114,5 +115,12 @@ public class ConexionRmi {
     public void Notificar(InterfazCliente cliente_a_enviar,String mensaje ) throws RemoteException{
         cliente_a_enviar.notificar(mensaje,cliente);
     }
+    public void ResponderPaso4(InterfazCliente cliente_a_enviar,String mensaje) throws RemoteException{
+        cliente_a_enviar.notificar_paso4(mensaje, cliente_a_enviar);
+    }
+    public void ResponderPaso5(InterfazCliente cliente_a_enviar,String mensaje) throws RemoteException{
+        VentanaSecundaria.getVentanaSecundaria().cliente_a_enviar.notificar_paso5(mensaje, cliente_a_enviar);
+    }
+    
     
 }
