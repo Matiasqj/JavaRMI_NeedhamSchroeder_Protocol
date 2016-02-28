@@ -25,102 +25,161 @@ import servidorRMI.Cliente;
 import servidorRMI.ConexionRmi;
 
 /**
+ * Server_Ventana: clase que tiene la ventana principal del servidor
  *
  * @author Matias Quinteros
  */
 public class Server_Ventana extends javax.swing.JFrame {
 
+    ConexionRmi conexion = new ConexionRmi();//Variable para objeto de ConexionRmi
+    private static Server_Ventana vistaserver;//Variable de mi vista del servidor
+    public static ArrayList<Cliente> Online;//Arraylist que contiene objetos de Clientes, corresponde a los usuarios online
+    public static ArrayList<Integer> Ck;//mantiene los ck asociados a los clientes online
+    DefaultTableModel tabla;//modelo para cargar tabla de usuarios en la ventana
+
     /**
-     * Creates new form User
+     * *
+     * Constructor
      */
-    ConexionRmi conexion = new ConexionRmi();
-    private static Server_Ventana vistaserver;
-    public static ArrayList<Cliente> Online;
-    public static ArrayList<Integer> Ck;
     public Server_Ventana() {
+        //Se incializan objetos de la clase
         Online = new ArrayList<Cliente>();
-        Ck= new ArrayList<Integer>();
-        initComponents();
+        Ck = new ArrayList<Integer>();
+        initComponents();//inicia componentes
         vistaserver = this;
         buttondetener.setEnabled(false);
         this.setVisible(true);
         this.setLocationRelativeTo(null);
-        CargarUsuarios();
+        CargarUsuarios();//Se cargan los usuarios
 
     }
-    public int Busca_Usuario_posicion(String usuario){
-        for(int i=0;i<Online.size();i++)
-            if(Online.get(i).getNombreCliente().equals(usuario))
-                return i;
-        return -1;
+
+    /**
+     * *
+     * Busca los usuarios dentro de la lista Online
+     *
+     * @param usuario: usuario a buscar
+     * @return ubicacion (entero) del usuario que se busca
+     */
+    public int Busca_Usuario_posicion(String usuario) {
+        for (int i = 0; i < Online.size(); i++) //para todos los usuarios
+        {
+            if (Online.get(i).getNombreCliente().equals(usuario))//si se encuentra online 
+            {
+                return i;//retorno posicion
+            }
+        }
+        return -1;//sino no se encontro
     }
-    
+
+    /**
+     * *
+     * Server_Ventana getServer_Ventana: retorna valor estatico de mi variable
+     * de la ventana del servidor
+     *
+     * @return
+     */
     public static Server_Ventana getServer_Ventana() {
-
         return vistaserver;
     }
-  public void Actualizar_Log_Usuario_ErrorSQL(String ex) {
+
+    /**
+     * Actualizar_Log_Usuario_ErrorSQL: actualiza Logserver si algun error con
+     * Mysql
+     *
+     * @param ex
+     */
+    public void Actualizar_Log_Usuario_ErrorSQL(String ex) {
         LogServer.append("" + getTimestamp() + " " + ex + "\n");
     }
-     
+
+    /**
+     * Actualizar_Log_Usuario_Conexion: actualiza Logserver si se conecta un
+     * nuevo usuario
+     *
+     * @param nombre
+     */
     public void Actualizar_Log_Usuario_Conexion(String nombre) {
-        LogServer.append("" + getTimestamp() + " Se conectó el usuario: " + nombre+" \n");
+        LogServer.append("" + getTimestamp() + " Se conectó el usuario: " + nombre + " \n");
     }
-   public void Actualizar_Log(String mensaje) {
+
+    /**
+     * actualiza Actualizar_Log: con un mensaje de entrada , actualiza la vista
+     * del LogServer(textarea)
+     *
+     * @param mensaje
+     */
+    public void Actualizar_Log(String mensaje) {
         LogServer.append("" + getTimestamp() + " " + mensaje + "\n");
     }
-     
-    DefaultTableModel tabla;
 
+    /**
+     * server_mysql_online: verifica si hay conexion con el servidor mysql
+     *
+     * @return nulo si esta abajo, sino retorna boolean false
+     */
     public boolean server_mysql_online() {
         ConexionMySQL mysql = new ConexionMySQL();
         Connection on = mysql.Conectar();
-        if (on == null) {
+        if (on == null) {//si hay error actualiza el log
             LogServer.append("" + getTimestamp() + " " + "ERROR: " + "No se pudo conectar con Mysql" + "\n");
         }
         return on != null;
 
     }
 
+    /**
+     * getTimestamp: retorna un string con el timestamp calculado
+     *
+     * @return
+     */
     public String getTimestamp() {
+        //se calcula de acuerdo al formato
         String timeStamp = new SimpleDateFormat("yyyy-MM-dd : HH:mm:ss").format(new java.util.Date());
 
         return timeStamp;
     }
 
+    /**
+     * *
+     * CargarUsuarios: actualiza tabla de usuarios
+     */
     public void CargarUsuarios() {
-        String[] titulo = {"Id", "Nombre Usuario", "Contraseña"};
-        tabla = new DefaultTableModel(null, titulo);
+        String[] titulo = {"Id", "Nombre Usuario", "Contraseña"};//titulo de columnas
+        tabla = new DefaultTableModel(null, titulo);//se genera el modelo
         String query = "SELECT * FROM usuario";
-        try {
+        try {//Prueba la carga con mysql
             ConexionMySQL mysql = new ConexionMySQL();
             Connection on = mysql.Conectar();
-            if (on == null) {
+            if (on == null) {//si hay error de conexion con mysql
                 LogServer.append("" + getTimestamp() + " " + "ERROR: " + "No se pudo conectar con Mysql" + "\n");
             }
-            
-            Statement st = on.createStatement();
-            ResultSet rs = st.executeQuery(query);
-            while (rs.next()) {
+
+            Statement st = on.createStatement();//se crfea el statement
+            ResultSet rs = st.executeQuery(query);//aplica la query 
+            while (rs.next()) {//por cada valor de la query
+                //capturo una tupla
                 String[] fila;
                 fila = new String[3];
-
                 fila[0] = rs.getString("id");
                 fila[1] = rs.getString("nombre_usuario");
                 fila[2] = rs.getString("password");
+                //la actualiza en la tabla
                 tabla.addRow(fila);
 
             }
+            //actualiza ahora todos los valores
             jTable1.setModel(tabla);
-            if (tabla.getRowCount() == 0) {
+            if (tabla.getRowCount() == 0) {//si no hay registros en la bd, la tabla muestra mensaje
 
                 registros.setText("No hay registros");
-            } else {
+            } else {//caso contrario se borra ese mensaje
                 registros.setText("");
             }
+            //cierra conexion
             rs.close();
             on.close();
-        } catch (SQLException ex) {
+        } catch (SQLException ex) {//error: actualizo logserver
             LogServer.append("" + getTimestamp() + " " + "ERROR: " + ex + "\n");
             JOptionPane.showMessageDialog(null, ex);
         }
@@ -395,31 +454,40 @@ public class Server_Ventana extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    /**
+     * *
+     * eliminarActionPerformed: Accion para eliminar un usuario de la bd
+     *
+     * @param evt
+     */
     private void eliminarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_eliminarActionPerformed
         int id = 0;
+        //primero ve si hay conexion
         ConexionMySQL mysql = new ConexionMySQL();
         Connection on = mysql.Conectar();
-        if (on == null) {
+        if (on == null) {//Sino muestra mensaje
             LogServer.append("" + getTimestamp() + " " + "ERROR: " + "No se pudo conectar con Mysql" + "\n");
         }
-
+        //formo la query
         String query = "delete from usuario where id = ?";
         int fila_seleccionada;
-        try {
-            fila_seleccionada = jTable1.getSelectedRow();
-            if (fila_seleccionada == -1) {
+        try {//prueba con mysql
+            fila_seleccionada = jTable1.getSelectedRow();//obtiene el valor seleccionado de la fila de la tabla
+            if (fila_seleccionada == -1) {//si no selecciono nada, manda mensaje en el panel
                 JOptionPane.showMessageDialog(null, "No se selecciono una fila");
-            } else {
+            } else {//si selecciono un valor
                 DefaultTableModel tabla;
-                tabla = (DefaultTableModel) jTable1.getModel();
-                id = Integer.valueOf((String) tabla.getValueAt(fila_seleccionada, 0));
-                String usuario = String.valueOf((String) tabla.getValueAt(fila_seleccionada, 1));
+                tabla = (DefaultTableModel) jTable1.getModel();//capturo el modelo de la tabla
+                id = Integer.valueOf((String) tabla.getValueAt(fila_seleccionada, 0));//captura el id seleccionado
+                String usuario = String.valueOf((String) tabla.getValueAt(fila_seleccionada, 1));//captura el usuario
+                //arregla el statement de query id = ?
                 PreparedStatement preparedStmt = on.prepareStatement(query);
-                preparedStmt.setInt(1, id);
-                int valor = preparedStmt.executeUpdate();
-                if (valor > 0) {
-                    jTable1.removeAll();
-                    CargarUsuarios();
+                preparedStmt.setInt(1, id); //setea la query con el valor de id
+                int valor = preparedStmt.executeUpdate(); //ejecuta la query en mysql
+                if (valor > 0) {//si fue positiva, limpia la tabla
+                    jTable1.removeAll();//borra todo en la tabla
+                    CargarUsuarios();//carga denuevo
+                    //Manda mensajes:
                     JOptionPane.showMessageDialog(null, "Se eliminó con éxito el usuario");
                     LogServer.append("" + getTimestamp() + " " + "Se eliminó el usuario: " + usuario + "\n");
                     jTextField1.setText("");
@@ -428,35 +496,49 @@ public class Server_Ventana extends javax.swing.JFrame {
                 preparedStmt.close();
             }
             on.close();
-            
+
         } catch (SQLException ex) {
             JOptionPane.showMessageDialog(null, ex);
             LogServer.append("" + getTimestamp() + " " + "ERROR: " + ex + "\n");
         }
 
     }//GEN-LAST:event_eliminarActionPerformed
-
+    /**
+     * *
+     * Limpia inforguardar
+     *
+     * @param evt
+     */
     private void jTextField2MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTextField2MouseClicked
         infoguardar.setText("");
     }//GEN-LAST:event_jTextField2MouseClicked
-
+    /**
+     * Accion para guardar un nuevo usuario
+     *
+     * @param evt
+     */
     private void buttonguardarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonguardarActionPerformed
-        String usuario = jTextField1.getText();
-        String password = jTextField2.getText();
-
+        String usuario = jTextField1.getText();//capturo nombre del usuario
+        String password = jTextField2.getText();//capturo texto
+        //prueba la conexion con mysql
         ConexionMySQL mysql = new ConexionMySQL();
         Connection on = mysql.Conectar();
-        if (on == null) {
+        if (on == null) {//Si no se conecta manda error
             LogServer.append("" + getTimestamp() + " " + "ERROR: " + "No se pudo conectar con Mysql");
         }
+        //query para guardar
         String query = "INSERT INTO usuario(nombre_usuario,password)" + "VALUES(?,?)";
-        try {
+        try {//prueba guardar en mysql
+            //prepara el statement
             PreparedStatement pst = on.prepareStatement(query);
+            //actualiza el statement con los valores ingresados
             pst.setString(1, usuario);
             pst.setString(2, password);
-            int valor = pst.executeUpdate();
-            if (valor > 0) {
+            int valor = pst.executeUpdate();//executa la query
+            if (valor > 0) {//si fue un exito
+                //borra los valores de la tabla
                 jTable1.removeAll();
+                //actualiza mensajes:
                 infoguardar.setText("Se ha guardado con éxito");
                 LogServer.append("" + getTimestamp() + " " + "Nuevo usuario creado : " + usuario + "\n");
                 CargarUsuarios();
@@ -469,23 +551,37 @@ public class Server_Ventana extends javax.swing.JFrame {
         }
 
     }//GEN-LAST:event_buttonguardarActionPerformed
-
+    /**
+     * Limpia infoguardar
+     *
+     * @param evt
+     */
     private void jTextField1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTextField1MouseClicked
         infoguardar.setText("");
     }//GEN-LAST:event_jTextField1MouseClicked
-
+    /**
+     * *
+     * Accion que detiene el servidor
+     *
+     * @param evt
+     */
     private void buttondetenerActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttondetenerActionPerformed
 
-        LogServer.append("" + getTimestamp() + " " + "Se detuvo el servidor" + "\n");
         try {
+            //deten el servidor
             conexion.detener();
             buttondetener.setEnabled(false);
             buttoniniciar.setEnabled(true);
-        } catch (RemoteException ex) {
+            LogServer.append("" + getTimestamp() + " " + "Se detuvo el servidor" + "\n");
+        } catch (RemoteException ex) {//si no se puede:
             Logger.getLogger(Server_Ventana.class.getName()).log(Level.SEVERE, null, ex);
         }
     }//GEN-LAST:event_buttondetenerActionPerformed
-
+    /**
+     * buttoniniciarActionPerformed: inicia el servidor
+     *
+     * @param evt
+     */
     private void buttoniniciarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttoniniciarActionPerformed
         Registry registro;
         try {
@@ -493,8 +589,9 @@ public class Server_Ventana extends javax.swing.JFrame {
             //Se instancia el objeto que implementa la interfaz del Servidor
             //Ahora hay que hacerlo remoto, para ello se registra en el Registry
             //con el método "rebind" que lo registra con un nombre para poder ser visto en ese espacio
-            //en este caso se le dio el nombre "Implementacion".
+
             ImplementacionServidor objeto = new ImplementacionServidor();
+            //Rebind Lab en el espacio.
             registro.rebind("Lab", objeto);
 
         } catch (RemoteException ex) {
@@ -512,8 +609,8 @@ public class Server_Ventana extends javax.swing.JFrame {
     private void PanelTabMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_PanelTabMouseClicked
         // TODO add your handling code here:
     }//GEN-LAST:event_PanelTabMouseClicked
-    
-   /**
+
+    /**
      * @param args the command line arguments
      */
 

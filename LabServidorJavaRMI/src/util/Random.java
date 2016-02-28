@@ -10,8 +10,13 @@ import java.util.concurrent.ThreadLocalRandom;
 /**
  *
  * @author Matias Quinteros
+ * Clase random retorna un valor aleatorio entre 1001 y 2001 para clave de sesion del servidor
  */
 public class Random {
+    /**
+     * GenerarClaveSesion: genera un entero aleatorio entre 1001 y 2001
+     * @return entero aleatorio
+     */
     public int GenerarClaveSesion(){
     return ThreadLocalRandom.current().nextInt(1001, 2001);
     }

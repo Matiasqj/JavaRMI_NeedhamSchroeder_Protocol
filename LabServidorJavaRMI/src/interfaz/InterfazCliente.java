@@ -8,7 +8,7 @@ package interfaz;
 import java.rmi.*;
 
 /**
- *
+ * Interfaz de metodos del cliente
  * @author Matias Quinteros
  */
 public interface InterfazCliente extends Remote{

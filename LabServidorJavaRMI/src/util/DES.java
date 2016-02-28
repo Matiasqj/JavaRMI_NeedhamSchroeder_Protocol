@@ -27,157 +27,171 @@ import javax.crypto.spec.PBEParameterSpec;
  *
  * @author Matias Quinteros
  * Algoritmo obtenido de : http://examples.javacodegeeks.com/core-java/crypto/encrypt-decrypt-with-des-using-pass-phrase/
+ * Clase DES , tiene metodos para desencriptar y encriptar con DES y MD5
  */
 public class DES {
 
     private static Cipher ecipher;
     private static Cipher dcipher;
-    private static final int iterationCount = 10;
-    private static byte[] salt = {
+    private static final int iteraciones = 10;//parametro de entrada para generar llave
+    private static byte[] salt = { //arreglo para generar llave
         (byte) 0xB2, (byte) 0x12, (byte) 0xD5, (byte) 0xB2,
         (byte) 0x44, (byte) 0x21, (byte) 0xC3, (byte) 0xC3
     };
-
+    /**
+     *** encriptado: con la clave de entrada utiliza DES para cifrar un texto plano
+     * @param llave
+     * @param texto_plano
+     * @return String con texto_plano encriptado o valor null si hay error
+     */
     public String encriptado(String llave, String texto_plano) {
- // create a user-chosen password that can be used with password-based encryption (PBE)
-        // provide password, salt, iteration count for generating PBEKey of fixed-key-size PBE ciphers
-
         try {
-            KeySpec keySpec = new PBEKeySpec(llave.toCharArray(), salt, iterationCount);
+            //Primero se crean las especificaciones para la clave a utilizar
+            KeySpec keySpec = new PBEKeySpec(llave.toCharArray(), salt, iteraciones);
 
-            // create a secret (symmetric) key using PBE with MD5 and DES
+            // se crea una clave secreta PBE con MD5 y DES
             SecretKey key = SecretKeyFactory.getInstance("PBEWithMD5AndDES").generateSecret(keySpec);
 
-            // construct a parameter set for password-based encryption as defined in the PKCS #5 standard
-            AlgorithmParameterSpec paramSpec = new PBEParameterSpec(salt, iterationCount);
-
+            // Se utilizan los parametros del algoritmo segun estandar PKCS #5 
+            AlgorithmParameterSpec paramSpec = new PBEParameterSpec(salt, iteraciones);
+            //se inicializa el cifrador
             ecipher = Cipher.getInstance(key.getAlgorithm());
-            // initialize the ciphers with the given key
+          
             ecipher.init(Cipher.ENCRYPT_MODE, key, paramSpec);
+            //luego de inicializado el cifrador, entonces se encripta el texto plano
             String encrypted = encrypt(texto_plano);
             return encrypted;
-        } catch (InvalidAlgorithmParameterException e) {
+        } catch (InvalidAlgorithmParameterException e) {//Para cualquier tipo de error, devuelve valor : null
 
-            System.out.println("Invalid Alogorithm Parameter:" + e.getMessage());
+            System.out.println("Parametro invalido para del algoritmo: " + e.getMessage());
 
             return null;
 
         } catch (InvalidKeySpecException e) {
 
-            System.out.println("Invalid Key Spec:" + e.getMessage());
+            System.out.println("Especificación invalida para la clave: " + e.getMessage());
 
             return null;
 
         } catch (NoSuchAlgorithmException e) {
 
-            System.out.println("No Such Algorithm:" + e.getMessage());
+            System.out.println("Error(No such algorithm): " + e.getMessage());
 
             return null;
 
         } catch (NoSuchPaddingException e) {
 
-            System.out.println("No Such Padding:" + e.getMessage());
+            System.out.println("Error(No Such Padding): " + e.getMessage());
 
             return null;
 
         } catch (InvalidKeyException e) {
 
-            System.out.println("Invalid Key:" + e.getMessage());
+            System.out.println("Clave invalida: " + e.getMessage());
 
             return null;
 
         }
 
     }
-
+    /***
+     * desencriptado: Toma la clave y el texto encriptado y devuelve un String de texto plano
+     * @param llave
+     * @param texto_encriptado
+     * @return String de texto desencriptado o valor null si hay error
+     */
     public String desencriptado(String llave, String texto_encriptado) {
         try {
 
-            // create a user-chosen password that can be used with password-based encryption (PBE)
-            // provide password, salt, iteration count for generating PBEKey of fixed-key-size PBE ciphers
-            KeySpec keySpec = new PBEKeySpec(llave.toCharArray(), salt, iterationCount);
-            // create a secret (symmetric) key using PBE with MD5 and DES
+            //Primero se crean las especificaciones para la clave a utilizar
+            KeySpec keySpec = new PBEKeySpec(llave.toCharArray(), salt, iteraciones);
+             // se crea una clave secreta PBE con MD5 y DES
             SecretKey key = SecretKeyFactory.getInstance("PBEWithMD5AndDES").generateSecret(keySpec);
 
-            // construct a parameter set for password-based encryption as defined in the PKCS #5 standard
-            AlgorithmParameterSpec paramSpec = new PBEParameterSpec(salt, iterationCount);
+           // Se utilizan los parametros del algoritmo segun estandar PKCS #5 
+            AlgorithmParameterSpec paramSpec = new PBEParameterSpec(salt, iteraciones);
             dcipher = Cipher.getInstance(key.getAlgorithm());
-            // initialize the ciphers with the given key
+            //se inicializa el cifrador
             dcipher.init(Cipher.DECRYPT_MODE, key, paramSpec);
+            //se desencripta el texto cifrado
             String decrypted = decrypt(texto_encriptado);
             return decrypted;
 
-        } catch (InvalidAlgorithmParameterException e) {
+        } catch (InvalidAlgorithmParameterException e) {//si hay algun error devuelve nulo
 
-            System.out.println("Invalid Alogorithm Parameter:" + e.getMessage());
+            System.out.println("Parametro invalido para del algoritmo: " + e.getMessage());
 
             return null;
 
         } catch (InvalidKeySpecException e) {
 
-            System.out.println("Invalid Key Spec:" + e.getMessage());
+            System.out.println("Especificación invalida para la clave: " + e.getMessage());
 
             return null;
 
         } catch (NoSuchAlgorithmException e) {
 
-            System.out.println("No Such Algorithm:" + e.getMessage());
+            System.out.println("Error (No Such Algorithm) : " + e.getMessage());
 
             return null;
 
         } catch (NoSuchPaddingException e) {
 
-            System.out.println("No Such Padding:" + e.getMessage());
+            System.out.println("Error (No Such Padding): " + e.getMessage());
 
             return null;
 
         } catch (InvalidKeyException e) {
 
-            System.out.println("Invalid Key:" + e.getMessage());
+            System.out.println("Clave invalida: " + e.getMessage());
 
             return null;
 
         }
     }
-
+    /**
+     * encrypt se encarga de cifrar con DES y parametros definidos para ecipher
+     * @param str
+     * @return String en base64 y texto cifrado, caso contrario retorna null(error)
+     */
     public static String encrypt(String str) {
 
         try {
-
-            // encode the string into a sequence of bytes using the named charset
-            // storing the result into a new byte array.
+            //cifra el string en la secuencia de bytes de 
+            //guarda en nuevo byte con codficacion utf8
             byte[] utf8 = str.getBytes("UTF8");
-
+            //realiza el cifrado definido para ecipher
             byte[] enc = ecipher.doFinal(utf8);
 
-// encode to base64
+            //lo cifra en base64
             enc = BASE64EncoderStream.encode(enc);
-
+            //retorna el string    
             return new String(enc);
         } catch (UnsupportedEncodingException | IllegalBlockSizeException | BadPaddingException e) {
+            //si hay error retorna nulo
+            return null;
         }
-
-        return null;
-
     }
-
+    /**
+     * decryt: toma un texto encriptado y lo transforma en un string de texto plano utilizando parametros definidos en ecipher
+     * @param str
+     * @return String de texto plano
+     */
     public static String decrypt(String str) {
 
         try {
 
-            // decode with base64 to get bytes
+            // se decifra con base 64
             byte[] dec = BASE64DecoderStream.decode(str.getBytes());
-
+            //utiliza el descifrado con parametros ya definidos
             byte[] utf8 = dcipher.doFinal(dec);
 
-// create new string based on the specified charset
+            //retorna el string desencriptado en base utf8
             return new String(utf8, "UTF8");
 
         } catch (IllegalBlockSizeException | BadPaddingException | UnsupportedEncodingException e) {
+          return null; //si hay error retorna nulo
         }
-
-        return null;
-
     }
 
 }

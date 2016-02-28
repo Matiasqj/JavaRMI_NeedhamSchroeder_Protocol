@@ -9,7 +9,7 @@ import java.rmi.*;
 import java.util.ArrayList;
 
 /**
- *
+ * Interfaz de metodos del servidor
  * @author Matias Quinteros
  */
 public interface InterfazServidor extends Remote {
