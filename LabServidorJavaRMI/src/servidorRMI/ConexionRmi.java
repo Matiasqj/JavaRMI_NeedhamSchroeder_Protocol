@@ -14,22 +14,32 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- *
+ * ConexionRmi: Se encarga de iniciar el servidor y establecer los registros que se utilizarán para establecer
+ * el puerto de comunicación
  * @author Matias Quinteros
  */
 public class ConexionRmi {
       private static Registry registry;
-
+      /**
+       * Retorna el registro que sera utilizado como direccion del puerto de comunicación
+       * @return registro
+       * @throws RemoteException 
+       */
     public Registry getRegistry() throws RemoteException{
         //Se inicia RMIREGISTRY para el registro de objetos
-        //startRegistry(puerto de comunicación), no es necesario especificar la direccion
+        //llama a la funcion startRegistry(puerto de comunicación)
         startRegistry(1099);
         return registry;
     }
-
+    /**
+     * detener: quita el registro de la direccion del servidor
+     * @return boolean : true: si no hay error y logra detener el servidor
+     *                   false: si existe algun error
+     * @throws RemoteException 
+     */
     public boolean detener() throws RemoteException{
         try {
-            //Se saca de rmiregistry el objeto "Implementacion"
+            //Se saca de rmiregistry el objeto "Lab"
             //Ya no esta disponible para ser consumido
             registry.unbind("Lab");
         } catch (NotBoundException ex) {
@@ -41,12 +51,18 @@ public class ConexionRmi {
         }
         return true;
     }
+    
+    /**
+     * Crea un registro de acuerdo al puerto de entrada o bien toma un registro ya existemte
+     * @param Puerto
+     * @throws RemoteException 
+     */
     private static void startRegistry(int Puerto) throws RemoteException{
-        try{
+        try{//si el registro fue creado
             registry = LocateRegistry.getRegistry(Puerto);
             registry.list();
         }
-        catch(RemoteException e){
+        catch(RemoteException e){//si no, crea un nuevo registro
             registry = LocateRegistry.createRegistry(Puerto);
             registry.list();
         }

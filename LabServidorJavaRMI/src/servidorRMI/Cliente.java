@@ -10,11 +10,12 @@ import interfaz.InterfazCliente;
 /**
  *
  * @author Matias Quinteros
+ * Cliente: guarda los datos de los usuarios que se conectan al servidor
  */
-public class Cliente implements Runnable{
-    private String NombreCliente;
-    private String pass;
-    private int id;
+public class Cliente{
+    private String NombreCliente;//guarda el nombre de usuario
+    private String pass;//guarda el pass
+    private int id;//guarda el id
     private InterfazCliente cliente;
 
     public int getId() {
@@ -49,8 +50,5 @@ public class Cliente implements Runnable{
         this.cliente = cliente;
     }
 
-    public void run() {
 
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
 }
