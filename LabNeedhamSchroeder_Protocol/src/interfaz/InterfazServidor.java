@@ -10,7 +10,7 @@ import java.rmi.RemoteException;
 import java.util.ArrayList;
 
 /**
- *
+ * Interfaz de metodos del servidor
  * @author Matias Quinteros
  */
 public interface InterfazServidor extends Remote {

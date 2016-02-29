@@ -10,8 +10,13 @@ import java.util.concurrent.ThreadLocalRandom;
 /**
  *
  * @author Matias Quinteros
+ * Clase random retorna un valor aleatorio entre 0 y 1000 para el nonce del usuario
  */
 public class Random {
+     /**
+     * Generar_nonce: genera un entero aleatorio entre 0 y 1000
+     * @return entero aleatorio
+     */
     public int Generar_nonce(){
     return ThreadLocalRandom.current().nextInt(0, 1000);
     }

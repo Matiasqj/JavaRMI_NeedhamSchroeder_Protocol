@@ -14,25 +14,7 @@ import util.DES;
  */
 public class Main {
      public static void main(String args[]) {
-         /*
-         DES des = new DES();
-         String llave ="piola";
-         String texto_plano = "holamundo";
-         String encriptado = des.encriptado(llave, texto_plano);
-         System.out.println(""+encriptado);
-         String desencriptado = des.desencriptado("piola", encriptado);
-         if(desencriptado==null){
-              System.out.println("error");
-         
-         
-         }
-         else{
-             
-             System.out.println("desencriptado:"+desencriptado);
-            
-         }*/
-
-         
+         //Muestra ventana
          new VentanaPrincipal().setVisible(true);
          
      }

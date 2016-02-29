@@ -25,13 +25,35 @@ public class VentanaSecundaria extends javax.swing.JDialog {
     /**
      * Creates new form VentanaSecundaria
      */
-    VentanaPrincipal inicio;
-    public int id_usuario;
-    public String nombre_usuario;
-    public ConexionRmi conexion;
-    public int mi_nonce;
-    private static VentanaSecundaria secundaria;
-    public String mipass;
+    VentanaPrincipal inicio;//objeto de la ventana anterior
+    public int id_usuario;//id del usuario que ingresa
+    public String nombre_usuario;//nombre del usuario ingresado
+    public ConexionRmi conexion;//objeto con la conexion a mysql
+    public int mi_nonce;//nonce generado para la sesion
+    private static VentanaSecundaria secundaria;//objeto de Ventana secundaria para poder actualizar componentes
+    public String mipass;//pass ingresada al iniciar sesion
+    DefaultListModel modelo_lista; //modelo para la lista de usuarios online
+    public String ck = ""; //ck del servidor devuelto
+    public String mensajepaso2 = "";//mensaje del paso 2
+    public String usuario_destino ="";//usuario destino que se le envia
+    public InterfazCliente cliente_a_enviar;//interfaz del cliente que se va a enviar msj
+    public String usuario_que_envio="";//nombre de usuario que envio mensaje
+    public int nonce_recibido;//nonce recibido en paso
+    public InterfazCliente usuario_emisor; //interfaz cliente del cliente que envio un msj
+    
+    
+    
+    /**
+     * Constructor
+     * @param parent ventana padre
+     * @param modal para poner la pagina a la mitad
+     * @param inicio_sesion ventana de inicio de sesion
+     * @param id
+     * @param nombre
+     * @param rmi valor de conexion de la bd
+     * @param nonce
+     * @param pass 
+     */
     public VentanaSecundaria(java.awt.Frame parent, boolean modal, VentanaPrincipal inicio_sesion, int id, String nombre, ConexionRmi rmi, int nonce,String pass) {
         super(parent, modal);
         this.conexion = rmi;
@@ -40,6 +62,7 @@ public class VentanaSecundaria extends javax.swing.JDialog {
         inicio = inicio_sesion;
         mi_nonce = nonce;
         mipass = pass;
+        //inicia componentes y los setea
         initComponents();
         jLabel1.setText("Bienvenido " + nombre);
         CargarListaOnline(nombre);
@@ -53,33 +76,45 @@ public class VentanaSecundaria extends javax.swing.JDialog {
         this.setLocationRelativeTo(null);
         this.setVisible(modal);
     }
-    DefaultListModel modelo_lista;
-
+    
+    /**
+     * Get para obtener objeto de Jframe de la ventana
+     * @return 
+     */
     public static VentanaSecundaria getVentanaSecundaria() {
         return secundaria;
     }
+    /**
+     * Comprueba si un suario corresponde a uno de la lista online de usuarios del modelo lista
+     * @param usuario
+     * @return 
+     */
     public boolean ComprobarUsuario(String usuario){
-        for(int i=0;i<modelo_lista.size();i++)
-            if(modelo_lista.get(i).equals(usuario))
-                return true;
-        return false;
+        for(int i=0;i<modelo_lista.size();i++) //para cada valor del modelo ista
+            if(modelo_lista.get(i).equals(usuario))//verifico si es verdadero
+                return true;//retorno verdadero si lo encontro
+        return false;//sino es falso
     }
+    /**
+     * Carga lista de usuarios online para ser mostrados en el modelo lista
+     * @param minombre : para no repetirlo dentro de la lista
+     */
     public void CargarListaOnline(String minombre) {
-        modelo_lista = new DefaultListModel();
+        modelo_lista = new DefaultListModel();//crea el nuevo objeto de modelo de lista
         try {
-            ArrayList<String[]> lista = conexion.getOnlineUsers();
-            for (int i = 0; i < lista.size(); i++) {
-                String auxiliar[] = lista.get(i);
-                //System.out.println(""+auxiliar[1]);
-                if (!auxiliar[1].equals(minombre)) {
-                    modelo_lista.addElement(auxiliar[1]);
+            ArrayList<String[]> lista = conexion.getOnlineUsers();//obtiene la lista de usuarios online del servidor llamado en conexionrmi
+            for (int i = 0; i < lista.size(); i++) {//por cada elemento de la lista de usuarios online
+                String auxiliar[] = lista.get(i);//guarda en un String[] auxiliar el valor obtenido
+                if (!auxiliar[1].equals(minombre)) {//si no es igual mi nombre de usuario
+                    modelo_lista.addElement(auxiliar[1]);//añado el elemento a la lista
                 }
             }
-            if (modelo_lista.getSize() == 0) {
+            if (modelo_lista.getSize() == 0) {//Si no hay usuarios cargados , manda msj
                 modelo_lista.addElement("No hay usuarios online");
             }
+            //setea el modelo_lista en la lista de la ventana
             jList1.setModel(modelo_lista);
-        } catch (RemoteException ex) {
+        } catch (RemoteException ex) {//error 
             System.out.println("error al cargar la lista");
         }
 
@@ -261,7 +296,10 @@ public class VentanaSecundaria extends javax.swing.JDialog {
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
-
+/**
+ * Luego de obtenido el paso 5 , manda mensaje de que fue un exito establecer conexion
+ * @param evt 
+ */
     private void comenzarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_comenzarActionPerformed
         
             JOptionPane.showMessageDialog(rootPane, "Comunicación confiable!");
@@ -269,23 +307,27 @@ public class VentanaSecundaria extends javax.swing.JDialog {
 
 
     }//GEN-LAST:event_comenzarActionPerformed
-
+/**
+ * Quita la ventana al inciar sesion
+ * @param evt 
+ */
     private void CerrarSesionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_CerrarSesionActionPerformed
         this.setVisible(false);
     }//GEN-LAST:event_CerrarSesionActionPerformed
-
+    /**
+     * Refresca la lista de usuarios
+     * @param evt 
+     */
     private void refreshActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_refreshActionPerformed
-        jList1.removeAll();
-        CargarListaOnline(nombre_usuario);
+        jList1.removeAll();//se eliminan todos
+        CargarListaOnline(nombre_usuario); //carga la lista de usuarios nuevamente
     }//GEN-LAST:event_refreshActionPerformed
-    public String ck = "";
-    public String mensajepaso2 = "";
-    public String usuario_destino ="";
-    public InterfazCliente cliente_a_enviar;
-    public String usuario_que_envio="";
-    public int nonce_recibido;
-    public InterfazCliente usuario_emisor;
-
+ 
+    /**
+     * Algunos get and set
+     * 
+     */
+    
     public int getNonce_recibido() {
         return nonce_recibido;
     }
@@ -334,55 +376,80 @@ public class VentanaSecundaria extends javax.swing.JDialog {
         this.usuario_emisor = usuario_emisor;
     }
     
+    
+    /***
+     * Deja el boton del paso 4  para realizar accion
+     */
     public void EnableBotonRecibidopaso4(){
     paso4.setEnabled(true);
     }
+    /***
+     * Deja el boton del paso 5  para realizar accion
+     */
     public void EnableBotonRecibidopaso5(){
     paso5.setEnabled(true);
     }
+    /***
+     * Deja el boton de comenzar comunicacion  para realizar accion
+     */
     public void EnableBotonComenzar(){
     comenzar.setEnabled(true);
     }
     
     
+    /**
+     * Funciones para actualizar LOG
+     * 
+     */
     
+    /**
+     * Actualiza el log con algun mensaje de entrada
+     * @param mensaje 
+     */
     public void ActualizarLogCliente(String mensaje){
-    
-        
-    Logmensajes.append(mensaje+"\n");
+        Logmensajes.append(mensaje+"\n");
     }
-    
+    /**
+     * Accion para iniciar la comunicacion con algun otro usuario e iniciar el protocolo N-H
+     * @param evt 
+     */
     private void establecercomunicacionMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_establecercomunicacionMouseClicked
         String usuario = "";
         try {
-            usuario = (String) jList1.getSelectedValue();
-            usuario_destino=usuario;
-        } catch (Exception e) {
+            usuario = (String) jList1.getSelectedValue();//Captura el usuario seleccionado de la lista
+            usuario_destino=usuario;//guardo el nombre del usuario destino
+        } catch (Exception e) {//error al no seleccionar un usuario
             JOptionPane.showMessageDialog(rootPane, "Debe seleccionar un usuario de la lista");
         }
-        if (usuario == null || usuario.equals("")) {
+        if (usuario == null || usuario.equals("")) {//error al no seleccionar un usuario
             JOptionPane.showMessageDialog(rootPane, "Debe seleccionar un usuario de la lista");
-        } else {
-            try {
-
+        } else {//si se selecciono un usuario desde la lista de usuarios online
+            try {//prueba:
+                /**
+                 * Actualiza mensajes del log
+                 */
                 Logmensajes.append("Intentado comunicación con el servidor" + "\n");
                 Logmensajes.append("Nonce generado : " + mi_nonce + "\n");
                 Logmensajes.append("Preparando para el servidor, usuario: " + nombre_usuario + ", usuario destino: " + usuario + ", nonce: " + mi_nonce + "\n");
-
+                //Comienza el paso 2 y llama a conexionRmi para que se comunique con la intefaz del servidor
                 String stringpaso2 = conexion.getPaso2Results(nombre_usuario, usuario, String.valueOf(mi_nonce));
                 DES des = new DES();
-                String pa2 = des.desencriptado("1", stringpaso2);
-                if (pa2 == null) {
+                //desencripta el mensaje obtenido desde el paso 2
+                String pa2 = des.desencriptado(mipass, stringpaso2);
+                if (pa2 == null) {//Si hubo un error se notifica
                     Logmensajes.append("Ocurrió un error en la comunicación\n");
-                } else {
-                    cliente_a_enviar = conexion.getServidor().cliente_mensaje(usuario_destino);
+                } else {//si se recibio bien el mensaje
+                    cliente_a_enviar = conexion.getServidor().cliente_mensaje(usuario_destino);//obtiene la interfaz del cliente a enviar
+                    /**
+                     * Actualiza mensajes del log
+                     */
                     Logmensajes.append("Recibido del servidor :" + pa2.replace("#servidor#", " , ") + "\n");
                     Logmensajes.append("Desencriptando con clave... \n");
-                    Scanner s = new Scanner(pa2).useDelimiter("#servidor#");
+                    Scanner s = new Scanner(pa2).useDelimiter("#servidor#");//quita delimitadores
                     Logmensajes.append("( ");
                     int k = 0;
-
-                    while (s.hasNext()) {
+                    
+                    while (s.hasNext()) {//sigue mostrando el mensaje obtenido con formato en el log
 
                         if (k == 2) {
                             ck = s.next();
@@ -396,73 +463,85 @@ public class VentanaSecundaria extends javax.swing.JDialog {
                         k++;
 
                     }
-
+                    //cierra conexion
                     s.close();
-                    System.out.println(""+des.desencriptado("1", mensajepaso2));
+                    
                     Logmensajes.append("\n");
-                    paso2.setEnabled(true);
+                    //actualoiza los botones
+                    //paso2.setEnabled(true);
                     paso3.setEnabled(true);
                 }
 
-            //System.out.println("desencriptado con kA: "+pa2);
-                // System.out.println("desencriptado con kb"+des.desencriptado("1", pa2));
-                //aqui envio al servidor
-                //System.out.println(""+paso1_datos[0]+" "+paso1_datos[1]+" "+" "+paso1_datos[2]);
-            } catch (RemoteException ex) {
+            } catch (RemoteException ex) {//si hubo error
                 Logger.getLogger(VentanaSecundaria.class.getName()).log(Level.SEVERE, null, ex);
             }
 
         }
-        //si se selecciono el usuario entonces envio mi nonce, usario y destino
+  
 
     }//GEN-LAST:event_establecercomunicacionMouseClicked
 
     private void paso2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_paso2ActionPerformed
         // TODO add your handling code here:
-        System.out.println("sii");
+        System.out.println("");
     }//GEN-LAST:event_paso2ActionPerformed
 
     private void paso3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_paso3ActionPerformed
         // TODO add your handling code here:
+        //ejecuta el paso3
         Logmensajes.append("Enviando al usuario : "+usuario_destino+" CK:"+ck+" y mi usuario: "+nombre_usuario+" encriptado con KB: "+mensajepaso2+"\n");
-        System.out.println("sii");
+        
         try {
-            conexion.Notificar(cliente_a_enviar,mensajepaso2);
+            conexion.Notificar(cliente_a_enviar,mensajepaso2);//Ejecuta la conexion con la interfaz cliente para ejecutar el paso3
         } catch (RemoteException ex) {
             Logger.getLogger(VentanaSecundaria.class.getName()).log(Level.SEVERE, null, ex);
         }
         
         
     }//GEN-LAST:event_paso3ActionPerformed
-
+    /**
+     * Ejecuta accion del paso 4
+     * @param evt 
+     */
     private void paso4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_paso4ActionPerformed
         // TODO add your handling code here:
-        System.out.println("sii");
+        //System.out.println("sii");
+        /**
+         * Actualiza el log del apso 4
+         */
         Logmensajes.append("Respondiendo el mensaje a : "+usuario_que_envio+"\n");
         Logmensajes.append("Encriptando mi nonce: "+mi_nonce+"con CK del servidor : "+ck+"\n");
+        //encri´pta el mensaje con la clave de sesion y el nonce
         DES des = new DES();
         String mensaje_encriptado= des.encriptado(ck, String.valueOf(mi_nonce));
         Logmensajes.append("El mensaje encriptado a enviar es: "+mensaje_encriptado+"\n");
         
-        try {
-            conexion.ResponderPaso4(usuario_emisor,mensaje_encriptado);
-        } catch (RemoteException ex) {
+        try {//prueba la conexion con el cliente
+            conexion.ResponderPaso4(usuario_emisor,mensaje_encriptado);//realiza el paso 4 conectandose con el cliente
+        } catch (RemoteException ex) {//si ocurre un error
             Logger.getLogger(VentanaSecundaria.class.getName()).log(Level.SEVERE, null, ex);
         }
         
     }//GEN-LAST:event_paso4ActionPerformed
-
+/**
+ * Realiza la accion del paso 5
+ * @param evt 
+ */
     private void paso5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_paso5ActionPerformed
         // TODO add your handling code here:
-        System.out.println("ssss");
+        //System.out.println("ssss");
+        //Actualiza el nonce
         Logmensajes.append("Enviando a : "+usuario_destino+ "su nonce-1"+"\n");
+        //calcula el nonce-1 
         int nonce_aenviar = nonce_recibido-1;
         Logmensajes.append("Nonce recibido del paso 4: "+nonce_recibido+" nonce -1: "+nonce_aenviar+"\n");
         DES des = new DES();
-        
+        //encripta el ck con el valor del nonce
         String mensaje_encriptado = des.encriptado(ck,String.valueOf(nonce_aenviar) );
         Logmensajes.append("Enviado el mensaje encriptado: "+mensaje_encriptado+"\n");
-        try {
+        try {//prueba la conexion
+            //trata de responder el paso5
+            //envia la interfaz y el mesj encriptado
             conexion.ResponderPaso5(conexion.getCliente(),mensaje_encriptado);
         } catch (RemoteException ex) {
             //Logger.getLogger(VentanaSecundaria.class.getName()).log(Level.SEVERE, null, ex);

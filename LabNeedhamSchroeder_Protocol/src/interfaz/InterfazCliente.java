@@ -9,7 +9,7 @@ import java.rmi.Remote;
 import java.rmi.RemoteException;
 
 /**
- *
+ * Interfaz de metodos del cliente
  * @author Matias Quinteros
  */
 public interface InterfazCliente extends Remote{

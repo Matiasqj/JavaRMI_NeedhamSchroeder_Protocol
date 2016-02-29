@@ -14,7 +14,7 @@ import javax.swing.JTextField;
 import util.Random;
 
 /**
- *
+ * Clase para la vista de la ventana de logueo para el usuario
  * @author Matias Quinteros
  */
 public class VentanaPrincipal extends javax.swing.JFrame {
@@ -110,27 +110,31 @@ public class VentanaPrincipal extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 public ConexionRmi conexion = new ConexionRmi();
+/**
+ * Accion cuando se quiere iniciar sesion
+ * @param evt 
+ */
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        String mensaje = passwordingresado.getText();
+        String mensaje = passwordingresado.getText();//captura el password
         try {
             
-            if(conexion.iniciarRegistry()){
-            
+            if(conexion.iniciarRegistry()){//si se puede establecer conexion con el servidor
+                //llama a registrarcliente para ver si el servidor le responde que su usuario y pass son validos
                 int inicio_sesion=conexion.registrarCliente(nombreusuario.getText(),passwordingresado.getText());
-                //System.out.println(""+inicio_sesion);
-                //conexion.getServidor().enviarMensaje("Hola mundo");
-                if(inicio_sesion==-1){
+                if(inicio_sesion==-1){//si son incorrectos los campos
                     JOptionPane.showMessageDialog(null, "Contraseña o usuario incorrecto");
                 }
-                else{
+                else{//si los campos son correctos, entonces pasa a la siguiente ventana
                     this.setVisible(true);
                     Random rd = new Random();
-                    int nonce = rd.Generar_nonce();
+                    int nonce = rd.Generar_nonce();//genera el nonce del usuario
+                    //crea nueva instancia de la ventana secundaria
                     new VentanaSecundaria(this, true, this,inicio_sesion,nombreusuario.getText(),conexion,nonce,passwordingresado.getText());
                 }
                 
             }
             else{
+                    //manda mensaje si no se pudo conectar
                      JOptionPane.showMessageDialog(null, "No se pudo conectar");
                     }
            
