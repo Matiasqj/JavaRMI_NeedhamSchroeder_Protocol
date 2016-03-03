@@ -13,6 +13,8 @@ import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.DefaultListModel;
+import javax.swing.ImageIcon;
+import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import util.DES;
 
@@ -40,7 +42,7 @@ public class VentanaSecundaria extends javax.swing.JDialog {
     public String usuario_que_envio="";//nombre de usuario que envio mensaje
     public int nonce_recibido;//nonce recibido en paso
     public InterfazCliente usuario_emisor; //interfaz cliente del cliente que envio un msj
-    
+    public ImageIcon imagen;
     
     
     /**
@@ -67,7 +69,7 @@ public class VentanaSecundaria extends javax.swing.JDialog {
         jLabel1.setText("Bienvenido " + nombre);
         CargarListaOnline(nombre);
         comenzar.setEnabled(false);
-        paso2.setEnabled(false);
+        
         paso3.setEnabled(false);
         paso4.setEnabled(false);
         paso5.setEnabled(false);
@@ -141,10 +143,10 @@ public class VentanaSecundaria extends javax.swing.JDialog {
         CerrarSesion = new javax.swing.JButton();
         infotext = new javax.swing.JLabel();
         refresh = new javax.swing.JButton();
-        paso2 = new javax.swing.JButton();
         paso3 = new javax.swing.JButton();
         paso4 = new javax.swing.JButton();
         paso5 = new javax.swing.JToggleButton();
+        imagenpaso = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
@@ -192,13 +194,6 @@ public class VentanaSecundaria extends javax.swing.JDialog {
             }
         });
 
-        paso2.setText("Ver_Paso2");
-        paso2.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                paso2ActionPerformed(evt);
-            }
-        });
-
         paso3.setText("Iniciar paso 3 {CK,A} clave: KB");
         paso3.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -233,12 +228,15 @@ public class VentanaSecundaria extends javax.swing.JDialog {
                             .addComponent(jLabel2)
                             .addComponent(refresh)
                             .addComponent(establecercomunicacion))
-                        .addGap(18, 18, 18)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(layout.createSequentialGroup()
+                                .addGap(18, 18, 18)
                                 .addComponent(jLabel3)
-                                .addContainerGap(281, Short.MAX_VALUE))
-                            .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 384, Short.MAX_VALUE)))
+                                .addContainerGap(568, Short.MAX_VALUE))
+                            .addGroup(layout.createSequentialGroup()
+                                .addGap(43, 43, 43)
+                                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 636, Short.MAX_VALUE)
+                                .addContainerGap())))
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(layout.createSequentialGroup()
@@ -247,17 +245,17 @@ public class VentanaSecundaria extends javax.swing.JDialog {
                             .addGroup(layout.createSequentialGroup()
                                 .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 252, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addComponent(CerrarSesion)))
-                        .addContainerGap())
-                    .addGroup(layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                .addComponent(paso2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addComponent(paso3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addComponent(paso4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addComponent(paso5, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                            .addComponent(comenzar))
-                        .addGap(0, 0, Short.MAX_VALUE))))
+                                .addComponent(CerrarSesion))
+                            .addGroup(layout.createSequentialGroup()
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                        .addComponent(paso3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                        .addComponent(paso4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                        .addComponent(paso5, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                                    .addComponent(comenzar))
+                                .addGap(18, 18, 18)
+                                .addComponent(imagenpaso, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                        .addContainerGap())))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -281,16 +279,19 @@ public class VentanaSecundaria extends javax.swing.JDialog {
                     .addComponent(jScrollPane2))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(infotext, javax.swing.GroupLayout.PREFERRED_SIZE, 15, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(paso2)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(paso3)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(paso4)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(paso5)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 66, Short.MAX_VALUE)
-                .addComponent(comenzar)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(40, 40, 40)
+                        .addComponent(paso3)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(paso4)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(paso5)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 59, Short.MAX_VALUE)
+                        .addComponent(comenzar))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(15, 15, 15)
+                        .addComponent(imagenpaso, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
                 .addContainerGap())
         );
 
@@ -381,18 +382,24 @@ public class VentanaSecundaria extends javax.swing.JDialog {
      * Deja el boton del paso 4  para realizar accion
      */
     public void EnableBotonRecibidopaso4(){
+        imagen = new ImageIcon("3.png");
+        imagenpaso.setIcon(imagen);
     paso4.setEnabled(true);
     }
     /***
      * Deja el boton del paso 5  para realizar accion
      */
     public void EnableBotonRecibidopaso5(){
+        imagen = new ImageIcon("4.png");
+        imagenpaso.setIcon(imagen);
     paso5.setEnabled(true);
     }
     /***
      * Deja el boton de comenzar comunicacion  para realizar accion
      */
     public void EnableBotonComenzar(){
+        imagen = new ImageIcon("5.png");
+        imagenpaso.setIcon(imagen);
     comenzar.setEnabled(true);
     }
     
@@ -443,8 +450,8 @@ public class VentanaSecundaria extends javax.swing.JDialog {
                     /**
                      * Actualiza mensajes del log
                      */
-                    Logmensajes.append("Recibido del servidor :" + pa2.replace("#servidor#", " , ") + "\n");
-                    Logmensajes.append("Desencriptando con clave... \n");
+                    Logmensajes.append("Recibido del servidor : " + stringpaso2 + "\n");
+                    Logmensajes.append("Desencriptando con mi clave... \n");
                     Scanner s = new Scanner(pa2).useDelimiter("#servidor#");//quita delimitadores
                     Logmensajes.append("( ");
                     int k = 0;
@@ -465,10 +472,13 @@ public class VentanaSecundaria extends javax.swing.JDialog {
                     }
                     //cierra conexion
                     s.close();
-                    
+                    //Se muestra la imagen del paso
+                    imagen = new ImageIcon("12.png");
+                    imagenpaso.setIcon(imagen);
                     Logmensajes.append("\n");
                     //actualoiza los botones
                     //paso2.setEnabled(true);
+                    Logmensajes.append("\n");
                     paso3.setEnabled(true);
                 }
 
@@ -481,16 +491,12 @@ public class VentanaSecundaria extends javax.swing.JDialog {
 
     }//GEN-LAST:event_establecercomunicacionMouseClicked
 
-    private void paso2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_paso2ActionPerformed
-        // TODO add your handling code here:
-        System.out.println("");
-    }//GEN-LAST:event_paso2ActionPerformed
-
     private void paso3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_paso3ActionPerformed
         // TODO add your handling code here:
         //ejecuta el paso3
         Logmensajes.append("Enviando al usuario : "+usuario_destino+" CK:"+ck+" y mi usuario: "+nombre_usuario+" encriptado con KB: "+mensajepaso2+"\n");
-        
+        imagen = new ImageIcon("3.png");
+        imagenpaso.setIcon(imagen);
         try {
             conexion.Notificar(cliente_a_enviar,mensajepaso2);//Ejecuta la conexion con la interfaz cliente para ejecutar el paso3
         } catch (RemoteException ex) {
@@ -509,13 +515,15 @@ public class VentanaSecundaria extends javax.swing.JDialog {
         /**
          * Actualiza el log del apso 4
          */
+        imagen = new ImageIcon("4.png");
+        imagenpaso.setIcon(imagen);
         Logmensajes.append("Respondiendo el mensaje a : "+usuario_que_envio+"\n");
         Logmensajes.append("Encriptando mi nonce: "+mi_nonce+"con CK del servidor : "+ck+"\n");
         //encri´pta el mensaje con la clave de sesion y el nonce
         DES des = new DES();
         String mensaje_encriptado= des.encriptado(ck, String.valueOf(mi_nonce));
         Logmensajes.append("El mensaje encriptado a enviar es: "+mensaje_encriptado+"\n");
-        
+        Logmensajes.append("\n");
         try {//prueba la conexion con el cliente
             conexion.ResponderPaso4(usuario_emisor,mensaje_encriptado);//realiza el paso 4 conectandose con el cliente
         } catch (RemoteException ex) {//si ocurre un error
@@ -531,6 +539,8 @@ public class VentanaSecundaria extends javax.swing.JDialog {
         // TODO add your handling code here:
         //System.out.println("ssss");
         //Actualiza el nonce
+        imagen = new ImageIcon("5.png");
+                    imagenpaso.setIcon(imagen);
         Logmensajes.append("Enviando a : "+usuario_destino+ "su nonce-1"+"\n");
         //calcula el nonce-1 
         int nonce_aenviar = nonce_recibido-1;
@@ -539,6 +549,7 @@ public class VentanaSecundaria extends javax.swing.JDialog {
         //encripta el ck con el valor del nonce
         String mensaje_encriptado = des.encriptado(ck,String.valueOf(nonce_aenviar) );
         Logmensajes.append("Enviado el mensaje encriptado: "+mensaje_encriptado+"\n");
+        Logmensajes.append("\n");
         try {//prueba la conexion
             //trata de responder el paso5
             //envia la interfaz y el mesj encriptado
@@ -556,6 +567,7 @@ public class VentanaSecundaria extends javax.swing.JDialog {
     private javax.swing.JTextArea Logmensajes;
     private javax.swing.JButton comenzar;
     private javax.swing.JButton establecercomunicacion;
+    private javax.swing.JLabel imagenpaso;
     private javax.swing.JLabel infotext;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
@@ -563,7 +575,6 @@ public class VentanaSecundaria extends javax.swing.JDialog {
     private javax.swing.JList jList1;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
-    private javax.swing.JButton paso2;
     private javax.swing.JButton paso3;
     private javax.swing.JButton paso4;
     private javax.swing.JToggleButton paso5;
