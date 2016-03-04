@@ -262,10 +262,11 @@ public class VentanaSecundaria extends javax.swing.JDialog {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(CerrarSesion)
-                    .addComponent(cerrarsesioninfo, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(cerrarsesioninfo, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(CerrarSesion)))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel2)
@@ -397,7 +398,7 @@ public class VentanaSecundaria extends javax.swing.JDialog {
      * Deja el boton del paso 4  para realizar accion
      */
     public void EnableBotonRecibidopaso4(){
-        imagen = new ImageIcon("3.png");
+        imagen = new ImageIcon(this.getClass().getResource("/images/3.png"));
         imagenpaso.setIcon(imagen);
     paso4.setEnabled(true);
     }
@@ -405,7 +406,7 @@ public class VentanaSecundaria extends javax.swing.JDialog {
      * Deja el boton del paso 5  para realizar accion
      */
     public void EnableBotonRecibidopaso5(){
-        imagen = new ImageIcon("4.png");
+        imagen = new ImageIcon(this.getClass().getResource("/images/4.png"));
         imagenpaso.setIcon(imagen);
     paso5.setEnabled(true);
     }
@@ -413,7 +414,7 @@ public class VentanaSecundaria extends javax.swing.JDialog {
      * Deja el boton de comenzar comunicacion  para realizar accion
      */
     public void EnableBotonComenzar(){
-        imagen = new ImageIcon("5.png");
+        imagen = new ImageIcon(this.getClass().getResource("/images/5.png"));
         imagenpaso.setIcon(imagen);
     comenzar.setEnabled(true);
     }
@@ -488,7 +489,7 @@ public class VentanaSecundaria extends javax.swing.JDialog {
                     //cierra conexion
                     s.close();
                     //Se muestra la imagen del paso
-                    imagen = new ImageIcon("12.png");
+                    imagen = new ImageIcon(this.getClass().getResource("/images/12.png"));
                     imagenpaso.setIcon(imagen);
                     Logmensajes.append("\n");
                     //actualoiza los botones
@@ -511,7 +512,7 @@ public class VentanaSecundaria extends javax.swing.JDialog {
         //ejecuta el paso3
         Logmensajes.append("Enviando al usuario : "+usuario_destino+" CK: "+ck+" y mi usuario: "+nombre_usuario+" encriptado con KB: "+mensajepaso2+"\n");
         Logmensajes.append("\n");
-        imagen = new ImageIcon("3.png");
+        imagen = new ImageIcon(this.getClass().getResource("/images/3.png"));
         imagenpaso.setIcon(imagen);
         try {
             conexion.Notificar(cliente_a_enviar,mensajepaso2);//Ejecuta la conexion con la interfaz cliente para ejecutar el paso3
@@ -531,7 +532,7 @@ public class VentanaSecundaria extends javax.swing.JDialog {
         /**
          * Actualiza el log del apso 4
          */
-        imagen = new ImageIcon("4.png");
+        imagen = new ImageIcon(this.getClass().getResource("/images/4.png"));
         imagenpaso.setIcon(imagen);
         Logmensajes.append("Respondiendo el mensaje a : "+usuario_que_envio+"\n");
         Logmensajes.append("Encriptando mi nonce: "+mi_nonce+" con CK del servidor : "+ck+"\n");
@@ -555,7 +556,7 @@ public class VentanaSecundaria extends javax.swing.JDialog {
         // TODO add your handling code here:
         //System.out.println("ssss");
         //Actualiza el nonce
-        imagen = new ImageIcon("5.png");
+        imagen = new ImageIcon(this.getClass().getResource("/images/5.png"));
                     imagenpaso.setIcon(imagen);
         Logmensajes.append("Enviando a : "+usuario_destino+ "su nonce-1"+"\n");
         //calcula el nonce-1 
