@@ -154,7 +154,7 @@ public class ImplementacionServidor extends UnicastRemoteObject implements Inter
      * @param nonce
      * @return 
      */
-    public synchronized String paso2(String usuario, String usuario_destino, String nonce) {
+    public synchronized String paso2(String usuario, String usuario_destino, String nonce) throws RemoteException{
         DES des = new DES();//objeto para DES
         Random rd = new Random();//objeto para generar el ck
         int ck = rd.GenerarClaveSesion();//genero la clave de sesion
@@ -190,5 +190,28 @@ public class ImplementacionServidor extends UnicastRemoteObject implements Inter
             return encriptado_KA;
         }
 
+    }
+    
+    
+    
+    
+    @Override
+    public synchronized int cerrarSesion(String usuario)throws RemoteException{
+        int ubicacion = -1;
+        for (int i = 0; i < Server_Ventana.getServer_Ventana().Online.size(); i++) {//Busca en ls lista Online de usuarios guardados
+            if (Server_Ventana.getServer_Ventana().Online.get(i).getNombreCliente().equals(usuario)) //si el usuario ingresado correponde 
+            //retorno su ubicacion para buscar la interfaz guardada
+            {
+                ubicacion = i;
+            }
+        }
+        if(ubicacion!=-1){
+            Server_Ventana.getServer_Ventana().Actualizar_Log("El usuario: " + usuario+" ha cerrado sesión");
+            clientes.remove(ubicacion);
+            Server_Ventana.getServer_Ventana().Online.remove(ubicacion);
+        }
+
+        return ubicacion;
+    
     }
 }

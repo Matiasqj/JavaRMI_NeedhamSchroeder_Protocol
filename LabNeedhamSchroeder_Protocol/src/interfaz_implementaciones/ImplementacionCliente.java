@@ -122,7 +122,7 @@ public class ImplementacionCliente extends UnicastRemoteObject implements Interf
             //desencripta el mensaje recibido
             String mensaje_desencriptado = des.desencriptado(VentanaSecundaria.getVentanaSecundaria().getCk(), mensaje);
             //Actualiza el log
-            VentanaSecundaria.getVentanaSecundaria().ActualizarLogCliente("mensaje desencriptado" + mensaje_desencriptado);
+            VentanaSecundaria.getVentanaSecundaria().ActualizarLogCliente("mensaje desencriptado: " + mensaje_desencriptado);
             if (mensaje_desencriptado != null) {//si el desencriptado fue correcto
                 //se comprueba el mensaje y el nonce
                 int mi_nonce = VentanaSecundaria.getVentanaSecundaria().mi_nonce;//obtengo mi nonce
@@ -130,11 +130,11 @@ public class ImplementacionCliente extends UnicastRemoteObject implements Interf
                 VentanaSecundaria.getVentanaSecundaria().ActualizarLogCliente("Comprobando nonce-1 obtenido: " + nonce_recibido + " con mi nonce: " + mi_nonce);
                 if (nonce_recibido == mi_nonce - 1) {//compruebo el nonce -1 si corresponde:
                     //Actualiza el Log
-                    VentanaSecundaria.getVentanaSecundaria().ActualizarLogCliente("Nonce-1 aceptado");
+                    VentanaSecundaria.getVentanaSecundaria().ActualizarLogCliente("Nonce-1 aceptado\n");
                     VentanaSecundaria.getVentanaSecundaria().ActualizarLogCliente("Comunicación aceptada");
                     VentanaSecundaria.getVentanaSecundaria().ActualizarLogCliente("Enviando ACK a emisor");
                     VentanaSecundaria.getVentanaSecundaria().EnableBotonComenzar();
-                    //Establece el boton para indicar que el paso 5 fue correcto
+                    //Establece el boton para indicar que el paso 5 fue correcto para el otro cliente
                     cliente_que_envio.Establecer_comunicacion();
                 } else {//no corresponde el nonce calculado
                     VentanaSecundaria.getVentanaSecundaria().ActualizarLogCliente("No se aceptó el nonce");
@@ -148,7 +148,11 @@ public class ImplementacionCliente extends UnicastRemoteObject implements Interf
 
         }
     }
-
+    /**
+     * Funcion para finalizar el paso5, si los pasos se realizaron de forma correcta, entonces se manda el mensaje y se habilita el boton para comenzar
+     * una eventual comunicación confiable
+     * @throws RemoteException 
+     */
     public void Establecer_comunicacion() throws RemoteException {
         VentanaSecundaria.getVentanaSecundaria().ActualizarLogCliente("Paso 5 completado y aceptado \n");
         VentanaSecundaria.getVentanaSecundaria().ActualizarLogCliente("Es posible establecer comunicación confiable\n");

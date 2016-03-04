@@ -36,6 +36,7 @@ public class Server_Ventana extends javax.swing.JFrame {
     public static ArrayList<Cliente> Online;//Arraylist que contiene objetos de Clientes, corresponde a los usuarios online
     public static ArrayList<Integer> Ck;//mantiene los ck asociados a los clientes online
     DefaultTableModel tabla;//modelo para cargar tabla de usuarios en la ventana
+    public ArrayList<String> nombres = new ArrayList<String>();
 
     /**
      * *
@@ -148,6 +149,7 @@ public class Server_Ventana extends javax.swing.JFrame {
         String[] titulo = {"Id", "Nombre Usuario", "Contraseña"};//titulo de columnas
         tabla = new DefaultTableModel(null, titulo);//se genera el modelo
         String query = "SELECT * FROM usuario";
+        nombres.clear();
         try {//Prueba la carga con mysql
             ConexionMySQL mysql = new ConexionMySQL();
             Connection on = mysql.Conectar();
@@ -163,6 +165,7 @@ public class Server_Ventana extends javax.swing.JFrame {
                 fila = new String[3];
                 fila[0] = rs.getString("id");
                 fila[1] = rs.getString("nombre_usuario");
+                nombres.add(fila[1]);
                 fila[2] = rs.getString("password");
                 //la actualiza en la tabla
                 tabla.addRow(fila);
@@ -331,12 +334,13 @@ public class Server_Ventana extends javax.swing.JFrame {
                         .addGap(64, 64, 64)
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, 110, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, 110, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                            .addComponent(jTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, 110, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(0, 0, Short.MAX_VALUE))
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addComponent(buttonguardar)
                         .addGap(18, 18, 18)
-                        .addComponent(infoguardar, javax.swing.GroupLayout.PREFERRED_SIZE, 183, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addComponent(infoguardar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                .addContainerGap())
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -474,7 +478,7 @@ public class Server_Ventana extends javax.swing.JFrame {
         try {//prueba con mysql
             fila_seleccionada = jTable1.getSelectedRow();//obtiene el valor seleccionado de la fila de la tabla
             if (fila_seleccionada == -1) {//si no selecciono nada, manda mensaje en el panel
-                JOptionPane.showMessageDialog(null, "No se selecciono una fila");
+                JOptionPane.showMessageDialog(null, "No se seleccionó una fila");
             } else {//si selecciono un valor
                 DefaultTableModel tabla;
                 tabla = (DefaultTableModel) jTable1.getModel();//capturo el modelo de la tabla
@@ -520,35 +524,60 @@ public class Server_Ventana extends javax.swing.JFrame {
     private void buttonguardarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonguardarActionPerformed
         String usuario = jTextField1.getText();//capturo nombre del usuario
         String password = jTextField2.getText();//capturo texto
-        //prueba la conexion con mysql
-        ConexionMySQL mysql = new ConexionMySQL();
-        Connection on = mysql.Conectar();
-        if (on == null) {//Si no se conecta manda error
-            LogServer.append("" + getTimestamp() + " " + "ERROR: " + "No se pudo conectar con Mysql");
-        }
-        //query para guardar
-        String query = "INSERT INTO usuario(nombre_usuario,password)" + "VALUES(?,?)";
-        try {//prueba guardar en mysql
-            //prepara el statement
-            PreparedStatement pst = on.prepareStatement(query);
-            //actualiza el statement con los valores ingresados
-            pst.setString(1, usuario);
-            pst.setString(2, password);
-            int valor = pst.executeUpdate();//executa la query
-            if (valor > 0) {//si fue un exito
-                //borra los valores de la tabla
-                jTable1.removeAll();
-                //actualiza mensajes:
-                infoguardar.setText("Se ha guardado con éxito");
-                LogServer.append("" + getTimestamp() + " " + "Nuevo usuario creado : " + usuario + "\n");
-                CargarUsuarios();
+        if (usuario.length() < 6 || password.length() < 6) {
+            if (usuario.length() < 6 && password.length() < 6) {
+                infoguardar.setText("Mínimo 6 carácteres para el nombre de usuario y pass");
+            } else if (usuario.length() < 6 && password.length() > 6) {
+                infoguardar.setText("Mínimo 6 carácteres para el nombre de usuario");
+            } else if (usuario.length() > 6 && password.length() < 6) {
+                infoguardar.setText("Mínimo 6 carácteres para el password");
             }
-            on.close();
-            pst.close();
-        } catch (SQLException ex) {
-            JOptionPane.showMessageDialog(null, ex);
-            LogServer.append("" + getTimestamp() + " " + "ERROR: " + ex + "\n");
+            else{
+                infoguardar.setText("Mínimo 6 carácteres para el password");
+            }
+        } else {
+            boolean verficado = false;
+            for (int i = 0; i < nombres.size(); i++) {
+                if (nombres.get(i).equals(usuario)) {
+                    verficado = true;
+                }
+            }
+
+            if (verficado == true) {
+                infoguardar.setText("El nombre de usuario ya existe, no es posible guardarlo");
+            } else {
+                //prueba la conexion con mysql
+                ConexionMySQL mysql = new ConexionMySQL();
+                Connection on = mysql.Conectar();
+                if (on == null) {//Si no se conecta manda error
+                    LogServer.append("" + getTimestamp() + " " + "ERROR: " + "No se pudo conectar con Mysql");
+                }
+                //query para guardar
+                String query = "INSERT INTO usuario(nombre_usuario,password)" + "VALUES(?,?)";
+                try {//prueba guardar en mysql
+                    //prepara el statement
+                    PreparedStatement pst = on.prepareStatement(query);
+                    //actualiza el statement con los valores ingresados
+                    pst.setString(1, usuario);
+                    pst.setString(2, password);
+                    int valor = pst.executeUpdate();//executa la query
+                    if (valor > 0) {//si fue un exito
+                        //borra los valores de la tabla
+                        jTable1.removeAll();
+                        //actualiza mensajes:
+                        infoguardar.setText("Se ha guardado con éxito");
+                        LogServer.append("" + getTimestamp() + " " + "Nuevo usuario creado : " + usuario + "\n");
+                        CargarUsuarios();
+                    }
+                    on.close();
+                    pst.close();
+                } catch (SQLException ex) {
+                    JOptionPane.showMessageDialog(null, ex);
+                    LogServer.append("" + getTimestamp() + " " + "ERROR: " + ex + "\n");
+                }
+            }
         }
+
 
     }//GEN-LAST:event_buttonguardarActionPerformed
     /**
