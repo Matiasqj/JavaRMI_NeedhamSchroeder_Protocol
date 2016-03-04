@@ -155,7 +155,12 @@ public class ConexionRmi {
     public void ResponderPaso5(InterfazCliente cliente_a_enviar,String mensaje) throws RemoteException{
         VentanaSecundaria.getVentanaSecundaria().cliente_a_enviar.notificar_paso5(mensaje, cliente_a_enviar);//llama a implementacion cliente para que ejecute la funcion paso 5
     }
-    
+    /**
+     * Cierra sesion enviandole al servidor el usario
+     * @param usuario
+     * @return valor obtenido de cerrar sesion, si fue -1 no fue posible cerrar sesion, en caso contrario si lo fue
+     * @throws RemoteException 
+     */
     public int CerrarSesion(String usuario) throws RemoteException{
         int valor= servidor.cerrarSesion(usuario);
         return valor;

@@ -194,19 +194,26 @@ public class ImplementacionServidor extends UnicastRemoteObject implements Inter
     
     
     
-    
+    /**
+     * Cerrar sesion: elimina la interfaz guardada del nombre de usuario recibido, y lo elimina de la lista online
+     * @param usuario
+     * @return -1 si no fue posible cerrar sesion, caso contrario si lo fue
+     * @throws RemoteException 
+     */
     @Override
     public synchronized int cerrarSesion(String usuario)throws RemoteException{
         int ubicacion = -1;
+        //primero se busca la posicion guardada de ese usuario en la lista online
         for (int i = 0; i < Server_Ventana.getServer_Ventana().Online.size(); i++) {//Busca en ls lista Online de usuarios guardados
             if (Server_Ventana.getServer_Ventana().Online.get(i).getNombreCliente().equals(usuario)) //si el usuario ingresado correponde 
             //retorno su ubicacion para buscar la interfaz guardada
             {
-                ubicacion = i;
+                ubicacion = i;//elimina la ubicacion
             }
         }
-        if(ubicacion!=-1){
+        if(ubicacion!=-1){//si la ubicacion fue encontrada entonces es posible cerrar sesion
             Server_Ventana.getServer_Ventana().Actualizar_Log("El usuario: " + usuario+" ha cerrado sesión");
+            //se remueven de las listas guardadas, la lista con las interfaces de cliente conectadas y la lista online
             clientes.remove(ubicacion);
             Server_Ventana.getServer_Ventana().Online.remove(ubicacion);
         }

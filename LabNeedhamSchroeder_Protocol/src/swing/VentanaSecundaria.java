@@ -316,12 +316,12 @@ public class VentanaSecundaria extends javax.swing.JDialog {
  */
     private void CerrarSesionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_CerrarSesionActionPerformed
         int valor= 0;
-        try {
+        try {//cerramos sesion con el servidor
             valor= conexion.CerrarSesion(nombre_usuario);
-            if(valor==-1){
+            if(valor==-1){//si no se pudo cerrar sesion : mensaje
                 cerrarsesioninfo.setText("No fue posible cerrar sesión");
             }
-            else{
+            else{//caso contrario se cierra la ventana
                 this.setVisible(false);
             }
         } catch (RemoteException ex) {
