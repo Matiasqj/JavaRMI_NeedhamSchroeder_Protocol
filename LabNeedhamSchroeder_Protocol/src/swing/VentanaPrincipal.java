@@ -120,7 +120,7 @@ public ConexionRmi conexion = new ConexionRmi();
             
             if(conexion.iniciarRegistry()){//si se puede establecer conexion con el servidor
                 //llama a registrarcliente para ver si el servidor le responde que su usuario y pass son validos
-                int inicio_sesion=conexion.registrarCliente(nombreusuario.getText(),passwordingresado.getText());
+                int inicio_sesion=conexion.registrarCliente(nombreusuario.getText().toLowerCase(),passwordingresado.getText());
                 if(inicio_sesion==-1){//si son incorrectos los campos
                     JOptionPane.showMessageDialog(null, "Contraseña o usuario incorrecto");
                 }
@@ -129,7 +129,7 @@ public ConexionRmi conexion = new ConexionRmi();
                     Random rd = new Random();
                     int nonce = rd.Generar_nonce();//genera el nonce del usuario
                     //crea nueva instancia de la ventana secundaria
-                    new VentanaSecundaria(this, true, this,inicio_sesion,nombreusuario.getText(),conexion,nonce,passwordingresado.getText());
+                    new VentanaSecundaria(this, true, this,inicio_sesion,nombreusuario.getText().toLowerCase(),conexion,nonce,passwordingresado.getText());
                 }
                 
             }

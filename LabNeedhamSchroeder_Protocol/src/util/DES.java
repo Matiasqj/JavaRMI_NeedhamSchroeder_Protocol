@@ -5,8 +5,7 @@
  */
 package util;
 
-import com.sun.xml.internal.messaging.saaj.packaging.mime.util.BASE64DecoderStream;
-import com.sun.xml.internal.messaging.saaj.packaging.mime.util.BASE64EncoderStream;
+
 import java.io.UnsupportedEncodingException;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
@@ -22,6 +21,7 @@ import javax.crypto.SecretKey;
 import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.PBEKeySpec;
 import javax.crypto.spec.PBEParameterSpec;
+import javax.xml.bind.DatatypeConverter;
 
 /**
  *
@@ -161,13 +161,13 @@ public class DES {
             //guarda en nuevo byte con codficacion utf8
             byte[] utf8 = str.getBytes("UTF8");
             //realiza el cifrado definido para ecipher
-            byte[] enc = ecipher.doFinal(utf8);
+            String enc;
 
             //lo cifra en base64
-            enc = BASE64EncoderStream.encode(enc);
+            enc = DatatypeConverter.printBase64Binary(str.getBytes());
             //retorna el string    
             return new String(enc);
-        } catch (UnsupportedEncodingException | IllegalBlockSizeException | BadPaddingException e) {
+        } catch (Exception e) {
             //si hay error retorna nulo
             return null;
         }
@@ -180,16 +180,16 @@ public class DES {
     public static String decrypt(String str) {
 
         try {
-
+            String enc;    
             // se decifra con base 64
-            byte[] dec = BASE64DecoderStream.decode(str.getBytes());
+            String decoded = new String(DatatypeConverter.parseBase64Binary(str));
             //utiliza el descifrado con parametros ya definidos
-            byte[] utf8 = dcipher.doFinal(dec);
+            
 
             //retorna el string desencriptado en base utf8
-            return new String(utf8, "UTF8");
+            return decoded;
 
-        } catch (IllegalBlockSizeException | BadPaddingException | UnsupportedEncodingException e) {
+        } catch (Exception e) {
           return null; //si hay error retorna nulo
         }
     }

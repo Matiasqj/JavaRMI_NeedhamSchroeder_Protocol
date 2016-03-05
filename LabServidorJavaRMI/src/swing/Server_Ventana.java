@@ -522,7 +522,7 @@ public class Server_Ventana extends javax.swing.JFrame {
      * @param evt
      */
     private void buttonguardarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonguardarActionPerformed
-        String usuario = jTextField1.getText();//capturo nombre del usuario
+        String usuario = jTextField1.getText().toLowerCase();//capturo nombre del usuario
         String password = jTextField2.getText();//capturo texto
         if (usuario.length() < 6 || password.length() < 6) {
             if (usuario.length() < 6 && password.length() < 6) {
@@ -628,6 +628,7 @@ public class Server_Ventana extends javax.swing.JFrame {
         }
         buttoniniciar.setEnabled(false);
         buttondetener.setEnabled(true);
+        CargarUsuarios();
         LogServer.append("" + getTimestamp() + " " + "Se inició el servidor" + "\n");
     }//GEN-LAST:event_buttoniniciarActionPerformed
 
